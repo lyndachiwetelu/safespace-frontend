@@ -6,9 +6,10 @@ const Home = () => {
     return (
     <FullLayout>
         <div className='HomeContent'>
-            <img src={banner} />
+            <img src={banner} alt="banner" />
         </div>
-    </FullLayout>)
+    </FullLayout>
+    )
 }
 
 export default Home

@@ -1,54 +1,5 @@
-.AppLogo {
-    padding-left: 10px;
-    float: left;
-    width: 120px;
-    height: 31px;
-    font-weight: bold;
-    font-size: 30px;
-    color: #27a68f;
-  }
-
-.AppHeader .AppHeader__Menu {
-  display: block;
-  text-align: right;
-  color: #0A7360;
-}
-
-.AppHeader {
-  padding:0; 
-  background:#fff;
-}
-
-.AppHeader .AppHeader__Menu .MenuItem:hover {
-  color: white;
-  background: #27a68f;
-  border-bottom: 2px solid #27a68f;
-
-}
-
-.AppHeader .AppHeader__Menu .MenuItem:active{
-  background: #27a68f;
-  border-bottom: 2px solid #27a68f;
-}
-
-.AppHeader__Menu__Button, .AppHeader__Menu__Button:hover {
-  background: #27a68f;
-  color: white;
-  border: 0px;
-}
-
 .AppFooter {
   text-align: center;
   color: white;
   background: #27a68f;
-}
-
-.AppHeader .ant-menu.AppHeader__Menu  .ant-menu-item.ant-menu-item-selected.MenuItem{ 
-   border-bottom: 2px solid rgb(4, 56, 56);
-   color: white;
-   background: #27a68f;
-}
-
-.AppHeader .ant-menu.AppHeader__Menu  .ant-menu-item.ant-menu-item-selected.MenuItem:after{ 
-  border-bottom: 0px;
 }
