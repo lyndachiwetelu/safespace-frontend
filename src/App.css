@@ -1,1 +1,72 @@
 @import '~antd/dist/antd.css';
+
+.AppLogo {
+  padding-left: 10px;
+  float: left;
+  width: 120px;
+  height: 31px;
+  font-weight: bold;
+  font-size: 30px;
+  color: #27a68f;
+}
+
+.AppLogo a {
+  color: #27a68f;
+}
+
+.AppHeader .AppHeader__Menu {
+display: block;
+text-align: right;
+color: #0A7360;
+}
+
+.AppHeader .AppHeader__Menu .MenuItem > span > a{
+  color: #0A7360;
+}
+
+.AppHeader {
+padding:0; 
+background:#fff;
+}
+
+.AppHeader .AppHeader__Menu .MenuItem:hover {
+  color: white;
+  background: #27a68f;
+  border-bottom: 2px solid #27a68f;
+
+}
+
+.AppHeader .AppHeader__Menu .MenuItem > span > a:hover, .AppHeader .AppHeader__Menu .MenuItem > span > a:focus, .AppHeader .AppHeader__Menu .MenuItem > span > a:active {
+  color: white;
+}
+
+.AppHeader .AppHeader__Menu .MenuItem:active{
+  background: #27a68f;
+  color: white;
+  border-bottom: 2px solid #27a68f;
+}
+
+.AppHeader .AppHeader__Menu .MenuItem > span > a:active{
+  color: white;
+}
+
+.AppHeader__Menu__Button, .AppHeader__Menu__Button:hover {
+  background: #27a68f;
+  color: white;
+  border: 0px;
+}
+
+
+.AppHeader .ant-menu.AppHeader__Menu  .ant-menu-item.ant-menu-item-selected.MenuItem{ 
+  border-bottom: 2px solid rgb(4, 56, 56);
+  color: white;
+  background: #27a68f;
+}
+
+.AppHeader .ant-menu.AppHeader__Menu .ant-menu-item.ant-menu-item-selected.MenuItem:after{ 
+ border-bottom: 0px;
+}
+
+.AppHeader .ant-menu.AppHeader__Menu .ant-menu-overflow-item.ant-menu-item.ant-menu-item-selected.ant-menu-item-only-child.MenuItem span a {
+  color:white;
+}
