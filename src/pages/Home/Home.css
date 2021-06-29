@@ -3,4 +3,47 @@
     color: white;
     background: #27a68f;
     min-height: 85vh;
+    padding-top: 2em;
+}
+
+.HomeContent .HomeContent__Heading {
+    font-size: 70px;
+}
+
+.HomeContent__Image {
+    max-height: 100%;
+    max-width: 100%;
+}
+
+.HomeContent__Col__Heading {
+    margin: auto;
+    line-height: 5em;
+    text-align: center;
+}
+
+.HomeContent__Col__Heading .HomeContent__Heading {
+    color: white;
+}
+
+.HomeContent__Col__Heading > p {
+    font-size: 30px;
+    line-height: 1em;
+}
+
+.HomeContent__Col__Heading .HomeContent__Col__Heading__Button {
+    width: 100%;
+    color: #27a68f;
+    font-size: 200%;
+    height: auto;
+}
+
+.HomeContent .Statistics img {
+    width: 50px;
+    height: 50px;
+}
+
+.HomeContent .Statistics h1{
+   color: white;
+   font-weight: bold;
+   line-height: 1em;
 }
