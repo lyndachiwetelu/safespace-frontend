@@ -43,7 +43,7 @@ const Questionnaire = () => {
                    <Col lg={4} xs={4}>
                     
                    </Col>
-                   <Col lg={16} xs={16} className="Questionnaire__Col__Row__Col__Form">
+                   <Col lg={16} xs={24} className="Questionnaire__Col__Row__Col__Form">
                    <Form
                         labelCol={{ span: 20 }}
                         wrapperCol={{ span: 24 }}

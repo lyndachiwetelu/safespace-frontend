@@ -27,14 +27,13 @@ const Signup = () => {
                     <h1>You’re almost there! Please enter your details now to signup and view recommended therapists</h1> 
                     </Header> 
                     <Row>
-                    <Col lg={4} xs={2}></Col>
-                        <Col lg={16} xs={16} className="Signup__Col__Form">
+                    <Col lg={4}></Col>
+                        <Col lg={16} xs={24} className="Signup__Col__Form">
                           <Form
                             name="basic"
                             size="large"
                             labelCol={{ span: 24 }}
                             wrapperCol={{ span: 24 }}
-                            initialValues={{ remember: true }}
                             onFinish={onFinish}
                             onFinishFailed={onFinishFailed}
                             layout="vertical"
@@ -96,7 +95,7 @@ const Signup = () => {
                                 LOG IN
                             </Button>
                         </Col>
-                        <Col lg={4} xs={4}></Col>
+                        <Col lg={4}></Col>
                     </Row> 
                 </Col>
                 <Col></Col>

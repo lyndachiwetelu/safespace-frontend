@@ -1,13 +1,12 @@
 import './App.css';
 import Home from './pages/Home/Home';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
-  BrowserRouter as Router,
   Switch,
   Route,
-  Link
+  Link,
+  useLocation
 } from "react-router-dom";
-
 import { Menu, Button, Layout } from 'antd';
 import AboutAndPricing from './pages/AboutAndPricing/AboutAndPricing';
 import Faq from './pages/Faq/Faq';
@@ -20,7 +19,13 @@ import TherapistList from './pages/TherapistList/TherapistList';
 const { Header } = Layout
 
 const App = () => {
+  
+  const location = useLocation()
   const [current, setCurrent] = useState('');
+
+  useEffect(() => {
+    setCurrent(location.pathname.slice(1))
+  }, [location.pathname])
 
   const handleClick = (e: any) => {
       setCurrent(e.key);
@@ -30,20 +35,19 @@ const App = () => {
   return (
      <>
       <Header className="AppHeader">
-      <Router>
         <div className="AppLogo"><Link to="/">SAFESPACE</Link></div>
        
             <Menu theme="light" onClick={handleClick} selectedKeys={[current]} mode="horizontal" className='AppHeader__Menu'>
-            <Menu.Item key="get" className='MenuItem'>
+            <Menu.Item key="get-started" className='MenuItem'>
                   <Button className="AppHeader__Menu__Button"><Link to="/get-started">GET STARTED</Link></Button>
               </Menu.Item>
-              <Menu.Item key="mail" className='MenuItem'>
+              <Menu.Item key="about" className='MenuItem'>
                   <Link to="/about">About and Pricing</Link>        
               </Menu.Item>
-              <Menu.Item key="app" className='MenuItem'>
+              <Menu.Item key="faq" className='MenuItem'>
                   <Link to="/faq">FAQ</Link>
               </Menu.Item>
-              <Menu.Item key="three" className='MenuItem'>
+              <Menu.Item key="how-it-works" className='MenuItem'>
                   <Link to="/how-it-works">How it works</Link>
               </Menu.Item>
               <Menu.Item key="login" className='MenuItem'>
@@ -76,7 +80,6 @@ const App = () => {
               <Home />
             </Route>
           </Switch>
-          </Router>
           </Header>
     </>)
 }
