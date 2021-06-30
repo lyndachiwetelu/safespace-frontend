@@ -6,7 +6,6 @@ import { useHistory } from "react-router-dom"
 import imgChecked from '../../images/checked.png'
 import imgConversation from '../../images/conversation.png'
 import imgStar from '../../images/star.png'
-import { useState } from "react"
 
 const Home = () => {
     const history  = useHistory()

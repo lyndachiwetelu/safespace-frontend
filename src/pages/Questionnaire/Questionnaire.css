@@ -3,6 +3,7 @@
     height: auto;
     line-height: 2em;
     padding: 20px;
+    text-align: center;
 }
 
 .Questionnaire .Questionnaire__Col .Questionnaire__Col_Header h1 {

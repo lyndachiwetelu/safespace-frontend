@@ -9,7 +9,6 @@ import {
   } from 'antd';
   
 import { Layout } from "antd"
-import { Redirect } from 'react-router';
 import FullLayout from "../../components/Layout/FullLayout"
 import './Questionnaire.css'
 import { useHistory } from 'react-router-dom';
@@ -30,10 +29,6 @@ const Questionnaire = () => {
     const onFinishFailed = (errorInfo: any) => {
         console.log('Failed:', errorInfo);
     };
-
-    const redirectTo = (path:string) => {
-       return <Redirect to={path} />
-    }
 
     return (<FullLayout>
         <Row className='Questionnaire'>
