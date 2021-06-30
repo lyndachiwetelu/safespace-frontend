@@ -1,0 +1,28 @@
+.Questionnaire .Questionnaire__Col .Questionnaire__Col_Header{
+    background: #27a687;
+    height: auto;
+    line-height: 2em;
+    padding: 20px;
+}
+
+.Questionnaire .Questionnaire__Col .Questionnaire__Col_Header h1 {
+    color: white;
+}
+
+.Questionnaire__Col__Row .Questionnaire__Col__Row__Col__Form {
+    padding-top: 20px;
+}
+
+.Questionnaire__Col__Row .Questionnaire__Col__Row__Col__Form .Questionnaire__Form {
+    text-align: center;
+}
+
+.Questionnaire__Col__Row .Questionnaire__Col__Row__Col__Form .Questionnaire__Form .ant-form-item-label {
+    text-align: center;
+}
+
+.Questionnaire__Col__Row .Questionnaire__Col__Row__Col__Form .Questionnaire__Form .QuestionnaireButton {
+    background: #27a687;
+    color: white;
+}
+

@@ -2,21 +2,21 @@ import FullLayout from "../../components/Layout/FullLayout"
 import './Home.css'
 import banner from '../../images/banner.png'
 import { Button, Col, Row } from "antd"
-import { Redirect } from "react-router-dom"
+import { useHistory } from "react-router-dom"
 import imgChecked from '../../images/checked.png'
 import imgConversation from '../../images/conversation.png'
 import imgStar from '../../images/star.png'
 import { useState } from "react"
 
 const Home = () => {
-    const [redirect, setRedirect] = useState(<></>)
+    const history  = useHistory()
+    
     const gotoQuestionnaire = () => {
-        setRedirect(<Redirect to="/get-started" />)
+       history.push("/get-started")
     }
 
     return (
     <FullLayout>
-        {redirect}
         <div className='HomeContent'>
         <Row>
             <Col lg={12} xs={20} className="HomeContent__Col__Heading">

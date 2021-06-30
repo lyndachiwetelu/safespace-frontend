@@ -10,12 +10,12 @@ type FullLayoutProps = {
 const FullLayout = ({ children }: FullLayoutProps) => {
     
     return (
-          <>
-            <Content>
+          <div className="FullLayout">
+            <Content className="FullLayout__Content">
             {children}
             </Content>
             <Footer className="AppFooter">Safespace copyright 2021</Footer>
-          </>
+          </div>
     )
 }
 

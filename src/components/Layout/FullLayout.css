@@ -3,3 +3,13 @@
   color: white;
   background: #0A7360;
 }
+
+.FullLayout__Content {
+  flex: 1;
+}
+
+.FullLayout {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
