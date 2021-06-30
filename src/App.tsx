@@ -14,6 +14,7 @@ import Faq from './pages/Faq/Faq';
 import Login from './pages/Login/Login';
 import Questionnaire from './pages/Questionnaire/Questionnaire';
 import HowItWorks from './pages/HowItWorks/HowItWorks';
+import Signup from './pages/Signup/Signup';
 
 const { Header } = Layout
 
@@ -60,6 +61,9 @@ const App = () => {
             </Route>
             <Route path="/login">
               <Login />
+            </Route>
+            <Route path="/signup">
+              <Signup />
             </Route>
             <Route path="/get-started">
               <Questionnaire />
