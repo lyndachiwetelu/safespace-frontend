@@ -1,0 +1,38 @@
+.Signup__Col__Header {
+    background: #27a687;
+    height: auto;
+    line-height: 2em;
+    padding: 20px;
+    text-align: center;
+}
+
+.Signup .Signup__Col__Header h1 {
+    color: white;
+}
+
+.Signup .Signup__Col__Form {
+    padding-top: 20px;
+    text-align: center;
+}
+
+.Signup__Col__Form__Button {
+    text-align: center;
+}
+
+.Signup__Col__Form__Button button {
+   width: 50%;
+   background: #27a687;
+   color: white;
+}
+
+
+.Signup__Col__Form__Button--Login {
+    width: 50%;
+    background: #27a687;
+    color: white;
+}
+
+.Signup__Col__Form__Button--Login:hover, .Signup__Col__Form__Button--Login:focus, .Signup__Col__Form__Button button:hover, .Signup__Col__Form__Button button:focus {
+    background: #0A7360;
+    color: white;
+}
