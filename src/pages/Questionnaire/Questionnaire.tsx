@@ -22,8 +22,7 @@ const Questionnaire = () => {
     const { Option } = Select;
 
     const onFinish = (values: any) => {
-        console.log('Success:', values);
-        history.push('/signup');
+        history.push(({ pathname: '/signup', state: values}));
     };
 
     const onFinishFailed = (errorInfo: any) => {
@@ -63,7 +62,7 @@ const Questionnaire = () => {
                     </Form.Item>
 
                     <Form.Item
-                        name="previous-therapy"
+                        name="hasHadTherapy"
                         label="Have you ever been in Therapy?"
                         hasFeedback
                         labelCol={{lg: {span:24}}}
@@ -77,7 +76,7 @@ const Questionnaire = () => {
 
         
                 <Form.Item
-                    name="select-ailments"
+                    name="ailments"
                     label="Select all the ailments that apply to you"
                     labelCol={{lg: {span:24}}}
                     rules={[{ required: true, message: 'Please select which of these apply to you', type: 'array' }]}
@@ -85,7 +84,7 @@ const Questionnaire = () => {
                 <Select mode="multiple" placeholder="Please select all those that apply">
                     <Option value="depression">Depression</Option>
                     <Option value="anxiety">Anxiety</Option>
-                    <Option value="bipolar-disorder">Bipolar Disorder</Option>
+                    <Option value="bipolar">Bipolar Disorder</Option>
                     <Option value="eating-disorder">Anorexia, bulimia, and other eating disorders</Option>
                     <Option value="ptsd">Posttraumatic stress disorder (PTSD)</Option>
                     <Option value="addiction">Addictions</Option>
@@ -94,14 +93,14 @@ const Questionnaire = () => {
                 </Form.Item>
 
                 <Form.Item
-                        name="religious-based-therapy"
+                        name="religiousTherapy"
                         label="Would you prefer a Religious Therapist?"
                         hasFeedback
                         labelCol={{lg: {span:24}}}
                         rules={[{ required: true, message: 'This is required!' }]}
                     >
                         <Select placeholder="Select">
-                        <Option value="no">No</Option>
+                        <Option value="none">No</Option>
                         <Option value="christian">Yes, Christian</Option>
                         <Option value="muslim">Yes, Muslim</Option>
                         <Option value="hindu">Yes, Hindu</Option>
@@ -110,7 +109,7 @@ const Questionnaire = () => {
                     </Form.Item>
 
                 <Form.Item
-                    name="select-media"
+                    name="media"
                     label="Voice Video or Text"
                     labelCol={{lg: {span:24}}}
                     rules={[{ required: true, message: 'Please select your preferred media.', type: 'array' }]}
@@ -122,7 +121,7 @@ const Questionnaire = () => {
                 </Select>
                 </Form.Item>
                 
-                <Form.Item valuePropName="checked" name="couples-therapy" label="Are you interested in Couples Therapy" labelCol={{lg: {span:24}}}>
+                <Form.Item valuePropName="checked" name="couplesTherapy" label="Are you interested in Couples Therapy" labelCol={{lg: {span:24}}}>
                     <Switch />
                 </Form.Item>
 
