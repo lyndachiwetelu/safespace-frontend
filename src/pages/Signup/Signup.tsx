@@ -2,7 +2,7 @@ import { Col, Row } from "antd"
 import FullLayout from "../../components/Layout/FullLayout"
 import "./Signup.css"
 import { Form, Input, Button, Layout } from 'antd';
-import { useHistory, useLocation } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import axios from 'axios';
 import { useState } from "react";
 
@@ -10,8 +10,6 @@ const Signup = () => {
     const { Header } = Layout
 
     const history = useHistory()
-    const location = useLocation()
-    const { state } : {state: any} = location
     const [signupError, setSignupError] = useState('')
     let questionnaire: any = sessionStorage.getItem('questionnaire')
 
@@ -38,7 +36,7 @@ const Signup = () => {
 
         const baseUrl = 'http://localhost:8000'
         try {
-            const response = await axios.post(baseUrl + '/api/v1/users', postData)
+            const response = await axios.post(baseUrl + '/api/v1/users', postData, { withCredentials: true })
             if (response.status === 201) {
                 sessionStorage.removeItem('questionnaire')
                 history.push({pathname: '/therapists', state:{ userId: response.data.id}})

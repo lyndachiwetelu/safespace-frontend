@@ -18,6 +18,7 @@
 display: block;
 text-align: right;
 color: #0A7360;
+border: 1px solid #27a68f;
 }
 
 .AppHeader .AppHeader__Menu .MenuItem > span > a{
