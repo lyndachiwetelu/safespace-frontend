@@ -4,16 +4,21 @@ import { useLocation } from "react-router-dom"
 
 const TherapistList = () => {
     const { state } :  {state: any } = useLocation()
-    const { userId } = state
+   
+    let userId : number | null = null
+    if (state !== undefined) {
+        userId = state.userId
+    }
+    
     const [therapists, setTherapists] = useState([])
 
     useEffect(() => {
-        fetchTherapists()
-       
-
+        if (userId !== null) {
+            fetchTherapists(userId)
+        }
     }, [])
 
-    const fetchTherapists = async () => {
+    const fetchTherapists = async (userId: number) => {
         const baseUrl = 'http://localhost:8000'
         try {
             const response = await axios.get(`${baseUrl}/api/v1/therapists/list/${userId}`, { withCredentials: true })

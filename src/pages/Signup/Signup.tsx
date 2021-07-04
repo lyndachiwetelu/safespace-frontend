@@ -13,19 +13,25 @@ const Signup = () => {
     const location = useLocation()
     const { state } : {state: any} = location
     const [signupError, setSignupError] = useState('')
+    let questionnaire: any = sessionStorage.getItem('questionnaire')
 
+    if (!questionnaire) {
+        history.push('/get-started')
+    }
+
+    questionnaire = JSON.parse(questionnaire)
     const onFinish = async (values: any) => {
         const postData = {
             name: values.name,
             email: values.email,
             password: values.password,
             settings:  {
-                age: state.age,
-                couplesTherapy: state.couplesTherapy ? state.couplesTherapy : false,
-                religiousTherapy: state.religiousTherapy,
-                hasHadTherapy: state.hasHadTherapy === 'yes' ? true : false,
-                ailments: state.ailments,
-                media:state.media
+                age: questionnaire.age,
+                couplesTherapy: questionnaire.couplesTherapy ? questionnaire.couplesTherapy : false,
+                religiousTherapy: questionnaire.religiousTherapy,
+                hasHadTherapy: questionnaire.hasHadTherapy === 'yes' ? true : false,
+                ailments: questionnaire.ailments,
+                media:questionnaire.media
 
             }
         }
@@ -34,6 +40,7 @@ const Signup = () => {
         try {
             const response = await axios.post(baseUrl + '/api/v1/users', postData)
             if (response.status === 201) {
+                sessionStorage.removeItem('questionnaire')
                 history.push({pathname: '/therapists', state:{ userId: response.data.id}})
             } else {
                 console.log('STATUS IS NOT 201')

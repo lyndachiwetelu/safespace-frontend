@@ -22,7 +22,8 @@ const Questionnaire = () => {
     const { Option } = Select;
 
     const onFinish = (values: any) => {
-        history.push(({ pathname: '/signup', state: values}));
+        sessionStorage.setItem('questionnaire', JSON.stringify(values))
+        history.push(({ pathname: '/signup'}));
     };
 
     const onFinishFailed = (errorInfo: any) => {
