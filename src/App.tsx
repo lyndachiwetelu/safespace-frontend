@@ -15,6 +15,7 @@ import Questionnaire from './pages/Questionnaire/Questionnaire';
 import HowItWorks from './pages/HowItWorks/HowItWorks';
 import Signup from './pages/Signup/Signup';
 import TherapistList from './pages/TherapistList/TherapistList';
+import SingleTherapist from './pages/SingleTherapist/SingleTherapist';
 
 const { Header } = Layout
 
@@ -70,6 +71,7 @@ const App = () => {
             <Route path="/signup">
               <Signup />
             </Route>
+            <Route path="/therapists/:id" children={<SingleTherapist />} />
             <Route path="/therapists">
               <TherapistList />
             </Route>

@@ -1,0 +1,64 @@
+.TherapistList__Col__Header {
+    background: #27a687;
+    height: auto;
+    line-height: 2em;
+    padding: 7px;
+    text-align: center;
+    font-size: 10px;
+    margin-bottom: 20px;
+}
+
+.TherapistList__Col__Header h1 {
+    color: white; 
+}
+
+
+.Therapist_List .TherapistList__therapistBox {
+    padding: 10px;
+    text-align: center;
+}
+
+.Therapist_List .TherapistList__therapistBox p, .Therapist_List .TherapistList__therapistBox h3{
+    line-height: 2em;
+}
+
+.Therapist_List .TherapistList__therapistBox .TherapistBox__Image {
+    border-radius: 50%;
+    height: 75mm;
+    width: 85%;
+    object-fit: cover;
+}
+
+.Therapist_List .TherapistList__therapistBox .TherapistBox__Button {
+   width: 100%;
+   color: white;
+   background: #27a687;
+}
+
+.Therapist_List .Therapist_List__Col__Criteria {
+    padding: 0 10px 0 10px;
+    text-align: center;
+}
+.Therapist_List .Therapist_List__Col__Criteria  .Therapist_List__Col__Criteria__Form .ant-form-item .ant-col.ant-form-item-label {
+    text-align: center;
+}
+
+.Therapist_List .Therapist_List__Col__Criteria h1 {
+    background: #27a687;
+    font-weight: bold;
+    color: white;
+    line-height: 1.5em;
+}
+
+.Therapist_List .Therapist_List__Col__Criteria .Therapist_List__Col__Criteria__Form .Criteria__Form__Button {
+    background: #27a687;
+    color: white;
+    width: 100%;
+}
+
+@media only screen and (max-width: 767px) {
+    .Therapist_List .TherapistList__therapistBox .TherapistBox__Image {
+        width: 40%;
+        object-fit: cover;
+    }
+  }
