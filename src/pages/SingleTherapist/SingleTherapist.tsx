@@ -58,7 +58,7 @@ const SingleTherapist = () => {
                 <ul>
                     {therapist.ailments.map((ailment:any) => {
                     return (
-                        <li>{ailment.name}</li>
+                        <li key={ailment.ailmentKey}>{ailment.name}</li>
                     )
                 }) }
                 </ul>
