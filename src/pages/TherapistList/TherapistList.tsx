@@ -24,12 +24,19 @@ const TherapistList = () => {
     }
     
     const [therapists, setTherapists] = useState([])
+    const [userSettings, setUserSettings] = useState(
+        {
+            media: state.settings.media || [], 
+            ailments: state.settings.ailments || [], 
+            couplesTherapy: state.settings.couplesTherapy || false,
+            religiousTherapy: state.settings.religiousTherapy || 'none',
+        })
 
     useEffect(() => {
         if (userId !== null) {
             fetchTherapists(userId)
         }
-    }, [userId])
+    }, [userId, userSettings])
 
     const fetchTherapists = async (userId: number): Promise<void> => {
         const baseUrl = 'http://localhost:8000'
@@ -43,6 +50,27 @@ const TherapistList = () => {
     const handleTherapistLinkClick = (id: number): void  => {
         history.push(`/therapists/${id}`)
     }
+
+    const onFinish = async (values: any) => {
+        const postData = {
+                couplesTherapy: values.couplesTherapy ? values.couplesTherapy : false,
+                religiousTherapy: values.religiousTherapy,
+                ailments: values.ailments,
+                media:values.media
+        }
+
+        const baseUrl = 'http://localhost:8000'
+        try {
+            const response = await axios.patch(`${baseUrl}/api/v1/users/${userId}/settings`, postData, { withCredentials: true })
+            if (response.status === 200) {
+               setUserSettings(response.data)
+            } else {
+                console.log('STATUS IS NOT 200')
+            }
+        } catch (err) {
+            // handle error
+        }
+    };
     return (
         <FullLayout>
             <Row className='Therapist_List'>
@@ -53,13 +81,14 @@ const TherapistList = () => {
                         wrapperCol={{ span: 24 }}
                         layout="vertical"
                         className="Therapist_List__Col__Criteria__Form"
+                        onFinish={onFinish}
                     >
                     <Form.Item
                             name="ailments"
                             label="Select all ailments"
                             labelCol={{lg: {span:24}}}
                             rules={[{ required: true, message: 'Please select which of these apply to you', type: 'array' }]}
-                            initialValue={['depression', 'anxiety', 'eating-disorder']}
+                            initialValue={userSettings.ailments.map((ailment: any) => ailment.ailmentKey)}
                         >
                         <Select mode="multiple" placeholder="Please select all those that apply">
                             <Option value="depression">Depression</Option>
@@ -78,6 +107,7 @@ const TherapistList = () => {
                                 hasFeedback
                                 labelCol={{lg: {span:24}}}
                                 rules={[{ required: true, message: 'This is required!' }]}
+                                initialValue={userSettings.religiousTherapy}
                             >
                                 <Select placeholder="Select">
                                 <Option value="none">No</Option>
@@ -94,7 +124,7 @@ const TherapistList = () => {
                             label="Voice Video or Text"
                             labelCol={{lg: {span:24}}}
                             rules={[{ required: true, message: 'Please select your preferred media.', type: 'array' }]}
-                            initialValue={['video', 'voice']}
+                            initialValue={userSettings.media.map((medium: any) => medium.mediaKey)}
                         >
                         <Select mode="multiple" placeholder="Please select all preferred media">
                             <Option value="video">Video</Option>
@@ -103,7 +133,7 @@ const TherapistList = () => {
                         </Select>
                         </Form.Item>
                             
-                        <Form.Item valuePropName="checked" name="couplesTherapy" label="Looking for Couples Therapy?" labelCol={{lg: {span:24}}}>
+                        <Form.Item initialValue={userSettings.couplesTherapy} valuePropName="checked" name="couplesTherapy" label="Looking for Couples Therapy?" labelCol={{lg: {span:24}}}>
                             <Switch />
                         </Form.Item>
                         <Form.Item>

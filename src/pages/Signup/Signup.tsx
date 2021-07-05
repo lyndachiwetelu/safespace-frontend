@@ -39,7 +39,7 @@ const Signup = () => {
             const response = await axios.post(baseUrl + '/api/v1/users', postData, { withCredentials: true })
             if (response.status === 201) {
                 sessionStorage.removeItem('questionnaire')
-                history.push({pathname: '/therapists', state:{ userId: response.data.id}})
+                history.push({pathname: '/therapists', state:{ userId: response.data.id, settings: response.data.settings }})
             } else {
                 console.log('STATUS IS NOT 201')
             }
