@@ -1,7 +1,7 @@
 import { Col, Row, Layout, Button } from "antd"
 import axios from "axios"
 import { useEffect, useState } from "react"
-import { useLocation } from "react-router-dom"
+import { useHistory, useLocation } from "react-router-dom"
 import FullLayout from "../../components/Layout/FullLayout"
 import './TherapistList.css'
 import {
@@ -16,6 +16,7 @@ const { Option } = Select;
 
 const TherapistList = () => {
     const { state } :  {state: any } = useLocation()
+    const history = useHistory()
    
     let userId : number | null = null
     if (state !== undefined) {
@@ -30,13 +31,17 @@ const TherapistList = () => {
         }
     }, [userId])
 
-    const fetchTherapists = async (userId: number) => {
+    const fetchTherapists = async (userId: number): Promise<void> => {
         const baseUrl = 'http://localhost:8000'
         try {
             const response = await axios.get(`${baseUrl}/api/v1/therapists/list/${userId}`, { withCredentials: true })
             setTherapists(response.data)
         } catch (err) {
         }
+    }
+
+    const handleTherapistLinkClick = (id: number): void  => {
+        history.push(`/therapists/${id}`)
     }
     return (
         <FullLayout>
@@ -118,7 +123,7 @@ const TherapistList = () => {
                                 <h3>{therapist.name} {therapist.therapistSetting.qualifications}</h3>
                                 <h3>${therapist.therapistSetting.pricePerSession} / {therapist.therapistSetting.timePerSession} Minutes</h3>
                                 <p>{therapist.therapistSetting.summary.substring(0, 150)}</p>
-                                <Button className="TherapistBox__Button" size='large'>See More</Button>
+                                <Button className="TherapistBox__Button" size='large' onClick={() => handleTherapistLinkClick(therapist.id)}>See More</Button>
                             </div>
                         </Col> ))}
                     </Row>

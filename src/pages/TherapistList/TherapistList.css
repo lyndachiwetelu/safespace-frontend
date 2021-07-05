@@ -25,8 +25,8 @@
 
 .Therapist_List .TherapistList__therapistBox .TherapistBox__Image {
     border-radius: 50%;
-    height: 38vh;
-    width: 22vw;
+    height: 28vh;
+    width: 15vw;
     object-fit: cover;
 }
 
@@ -37,7 +37,6 @@
 }
 
 .Therapist_List .Therapist_List__Col__Criteria {
-    margin-top:60px;
     padding: 10px;
     text-align: center;
 }
@@ -46,9 +45,11 @@
 }
 
 .Therapist_List .Therapist_List__Col__Criteria h1 {
-    color: #0A7360;
+    background: #27a687;
     font-weight: bold;
-    text-decoration: underline;
+    color: white;
+    margin-top: 30px;
+    line-height: 1.5em;
 }
 
 .Therapist_List .Therapist_List__Col__Criteria .Therapist_List__Col__Criteria__Form .Criteria__Form__Button {
