@@ -5,7 +5,6 @@
     padding: 7px;
     text-align: center;
     font-size: 10px;
-    margin-top: 40px;
     margin-bottom: 20px;
 }
 
@@ -25,8 +24,8 @@
 
 .Therapist_List .TherapistList__therapistBox .TherapistBox__Image {
     border-radius: 50%;
-    height: 28vh;
-    width: 15vw;
+    height: 75mm;
+    width: 85%;
     object-fit: cover;
 }
 
@@ -37,7 +36,7 @@
 }
 
 .Therapist_List .Therapist_List__Col__Criteria {
-    padding: 10px;
+    padding: 0 10px 0 10px;
     text-align: center;
 }
 .Therapist_List .Therapist_List__Col__Criteria  .Therapist_List__Col__Criteria__Form .ant-form-item .ant-col.ant-form-item-label {
@@ -48,7 +47,6 @@
     background: #27a687;
     font-weight: bold;
     color: white;
-    margin-top: 30px;
     line-height: 1.5em;
 }
 
@@ -58,3 +56,9 @@
     width: 100%;
 }
 
+@media only screen and (max-width: 767px) {
+    .Therapist_List .TherapistList__therapistBox .TherapistBox__Image {
+        width: 40%;
+        object-fit: cover;
+    }
+  }
