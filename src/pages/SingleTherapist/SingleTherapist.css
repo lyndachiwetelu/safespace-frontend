@@ -1,0 +1,75 @@
+.Therapist .Therapist__Col__About {
+    padding: 30px 0 0 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.Therapist .Therapist__Col__About h3, .Therapist .Therapist__Col__About p {
+    line-height: 1.5em;
+}
+
+.Therapist .Therapist__Col__About .Therapist__Col__About__Image {
+    border-radius: 50%;
+    height: 70mm;
+    width: 50%;
+    object-fit: cover;
+    margin-bottom: 30px;
+    display: block;
+}
+
+.Therapist .Therapist__Col__About .Therapist__Col__About__Button {
+    width: 50%;
+    color: white;
+    background: #27a68f;
+}
+
+.Therapist .Therapist__Col__About  .Therapist__Col__About__Info {
+    display: flex;
+    flex-direction: row;
+}
+
+.Therapist .Therapist__Col__About  .Therapist__Col__About__Info .Therapist__Col__About__Info--Price {
+    margin-left: auto;
+    display: flex;
+}
+
+.Therapist .TherapistOtherDetails h2 {
+    color:#27a68f;
+    line-height: 1.5em;
+}
+
+.Therapist .TherapistOtherDetails ul {
+    line-height: 2em;
+}
+
+.Therapist .TherapistOtherDetails {
+    padding: 20px;
+}
+
+.Therapist .TherapistOtherDetails .TherapistOtherDetails__CompletedSessions {
+    display: flex;
+}
+
+.Therapist .TherapistOtherDetails .TherapistOtherDetails__CompletedSessions img{
+   margin-right: 20px;
+}
+
+.Therapist .TherapistOtherDetails .Reviews p:first-child {
+    margin-top: 10px;
+    line-height: 1.5em;
+    font-size: 17px;
+    color: gray;
+}
+
+.Therapist .TherapistOtherDetails .Reviews p {
+    margin-top: 10px;
+    line-height: 1.5em;
+    font-size: 14px;
+}
+
+
+@media only screen and (max-width:767px) {
+    .Therapist .Therapist__Col__About .Therapist__Col__About__Image {
+        width: 40%;
+    }
+}
