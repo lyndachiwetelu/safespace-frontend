@@ -3,20 +3,34 @@ import FullLayout from "../../components/Layout/FullLayout"
 import "./Login.css"
 import { Form, Input, Button, Layout } from 'antd';
 import { useHistory } from "react-router-dom";
+import axios from "axios";
+import { useState } from "react";
 
 const Login = () => {
     const { Header } = Layout
 
     const history = useHistory()
+    const [loginError, setLoginError] = useState('')
 
-    const onFinish = (values: any) => {
-        console.log('Success:', values);
-        history.push('/therapists')
+    const onFinish = async (values: any) => {
+        const baseUrl = 'http://localhost:8000'
+        try {
+            const response = await axios.post(`${baseUrl}/api/v1/users/login`, values)
+            if (response.status === 200) {
+                history.push({pathname: '/therapists', state: {userId: response.data.id, settings: response.data.settings}})
+            } else if (response.status === 400) {
+                setLoginError('Invalid Credentials')
+            }
+            
+        } catch (err) {
+            setLoginError('Invalid Credentials')
+        }
+        
       };
     
-      const onFinishFailed = (errorInfo: any) => {
+    const onFinishFailed = (errorInfo: any) => {
         console.log('Failed:', errorInfo);
-      };
+    };
 
     return (
         <FullLayout>
@@ -29,6 +43,7 @@ const Login = () => {
                     <Row>
                     <Col lg={4}></Col>
                         <Col lg={16} xs={24} className="Login__Col__Form">
+                        <span style={{color:'red'}}>{loginError}</span>
                           <Form
                             name="basic"
                             size="large"
