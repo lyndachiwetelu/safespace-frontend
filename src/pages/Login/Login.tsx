@@ -15,7 +15,7 @@ const Login = () => {
     const onFinish = async (values: any) => {
         const baseUrl = 'http://localhost:8000'
         try {
-            const response = await axios.post(`${baseUrl}/api/v1/users/login`, values)
+            const response = await axios.post(`${baseUrl}/api/v1/users/login`, values, {withCredentials: true})
             if (response.status === 200) {
                 history.push({pathname: '/therapists', state: {userId: response.data.id, settings: response.data.settings}})
             } else if (response.status === 400) {
