@@ -15,21 +15,23 @@ const { Option } = Select;
 
 
 const TherapistList = () => {
-    const { state } :  {state: any } = useLocation()
+    const { state } :  { state: any } = useLocation()
     const history = useHistory()
    
     let userId : number | null = null
     if (state !== undefined) {
         userId = state.userId
+    } else if (!state) {
+        history.push('/login')
     }
     
     const [therapists, setTherapists] = useState([])
     const [userSettings, setUserSettings] = useState(
         {
-            media: state.settings.media || [], 
-            ailments: state.settings.ailments || [], 
-            couplesTherapy: state.settings.couplesTherapy || false,
-            religiousTherapy: state.settings.religiousTherapy || 'none',
+            media: state.settings?.media || [], 
+            ailments: state.settings?.ailments || [], 
+            couplesTherapy: state.settings?.couplesTherapy || false,
+            religiousTherapy: state.settings?.religiousTherapy || 'none',
         })
 
     useEffect(() => {
