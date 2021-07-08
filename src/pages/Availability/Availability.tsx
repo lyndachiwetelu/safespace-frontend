@@ -23,10 +23,10 @@ const Availability = () => {
             if (response.status === 200) {
                 setAvailabilities(response.data)
             } else {
-                console.log('A DIFFERENT RESPONSE CODE WAS RETURNED')
+                // handle unexpected response
             } 
         } catch (err) {
-            console.log(err)
+            // handle error
         }
     }
 
