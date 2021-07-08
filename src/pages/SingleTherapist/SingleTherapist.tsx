@@ -1,13 +1,14 @@
 import { Button, Col, Rate, Row } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import FullLayout from "../../components/Layout/FullLayout";
 import './SingleTherapist.css'
 import checked from './../../images/checked.png'
 
 const SingleTherapist = () => {
     let { id } : { id: string} = useParams();
+    const history = useHistory();
 
     const [therapist, setTherapist]: [therapist:any, setTherapist:any] = useState(null)
 
@@ -47,7 +48,7 @@ const SingleTherapist = () => {
                          
                          
                          <p>{therapist.therapistSetting.summary.substring(0, 300).repeat(3)}</p>
-                         <Button className="Therapist__Col__About__Button" size="large">BOOK A SESSION</Button>
+                         <Button className="Therapist__Col__About__Button" size="large" onClick={() => history.push(`/therapists/${therapist.id}/availability`)}>BOOK A SESSION</Button>
                     </div>
                 ) : null}
             </Col>

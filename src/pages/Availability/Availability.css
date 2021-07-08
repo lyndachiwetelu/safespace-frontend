@@ -1,0 +1,101 @@
+.Availability {
+    text-align: center;
+    padding-top: 20px;
+}
+
+.Availability .heading {
+    background: white;
+    margin-bottom: 15px;
+}
+
+.Availability .heading p {
+    line-height: 1em;
+    font-size: 20px;
+}
+
+.Availability .SelectAvailability {
+    border: 2px solid #27a68f;
+    border-radius: 15px;
+    padding: 0 10px 10px 10px;
+}
+
+.Availability .SelectAvailability .Availabilities {
+    text-align: left;
+}
+
+.Availability .SelectAvailability .Availabilities h3 {
+    line-height: 1.5em;
+}
+
+.Availability .SelectAvailability .Availabilities h3:nth-child(3) {
+    color: gray;
+}
+
+.Availability .SelectAvailability .Availabilities .List div, .Availability .SelectAvailability .Summary .List div {
+    display: flex;
+}
+
+.Availability .SelectAvailability .Availabilities .List div p, .Availability .SelectAvailability .Summary .List div p {
+    display: flex;
+    border: 2px solid #27a68f;
+    border-radius: 15px;
+    margin: 5px;
+    padding: 5px;
+    line-height: 1.2em;
+}
+
+.Availability .SelectAvailability .Availabilities .List div .ant-btn {
+    background: #27a68f;
+    color:white;
+}
+
+.Availability .SelectAvailability .Availabilities .List div .ant-btn.disabled{
+     opacity: 0.5; 
+}
+
+.Availability .SelectAvailability .Summary .List div .ant-btn {
+    background: #f13b3b;
+    color:white;
+}
+
+
+.Availability .SelectAvailability .Summary {
+    text-align: left;
+}
+
+.Availability .SelectAvailability .Summary h3 {
+    line-height: 1.5em;
+}
+
+.Availability .SelectAvailability .Summary h3:nth-child(3) {
+    color:gray
+}
+
+
+.Availability .SelectAvailability .Summary .Summary__Header {
+    background: #27a68f;
+    color:white;
+    line-height: 0.5em;
+    font-size: 20px;
+    width: 200px;
+    height: auto;
+    padding: 10px;
+    text-align: center;
+}
+
+.Availability .Links {
+    display: flex;
+    justify-content: space-between;
+}
+
+.Availability .Links .ant-btn {
+    background: #27a68f;
+    color: white;
+    border-radius: 10px;
+}
+
+.Availability .TherapistInfo {
+    line-height: 1.5em;
+    margin-bottom: 10px;
+    margin-top: 30px;
+}

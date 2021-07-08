@@ -17,6 +17,7 @@ const Login = () => {
         try {
             const response = await axios.post(`${baseUrl}/api/v1/users/login`, values, {withCredentials: true})
             if (response.status === 200) {
+                sessionStorage.setItem('userId', response.data.id)
                 history.push({pathname: '/therapists', state: {userId: response.data.id, settings: response.data.settings}})
             } else if (response.status === 400) {
                 setLoginError('Invalid Credentials')

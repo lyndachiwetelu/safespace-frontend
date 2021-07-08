@@ -16,6 +16,8 @@ import HowItWorks from './pages/HowItWorks/HowItWorks';
 import Signup from './pages/Signup/Signup';
 import TherapistList from './pages/TherapistList/TherapistList';
 import SingleTherapist from './pages/SingleTherapist/SingleTherapist';
+import Availability from './pages/Availability/Availability';
+import BookingConfirmation from './pages/BookingConfirmation/BookingConfirmation';
 
 const { Header } = Layout
 
@@ -71,10 +73,12 @@ const App = () => {
             <Route path="/signup">
               <Signup />
             </Route>
+            <Route path="/therapists/:id/availability" children={<Availability />} />
             <Route path="/therapists/:id" children={<SingleTherapist />} />
             <Route path="/therapists">
               <TherapistList />
             </Route>
+            <Route path="/booking/confirmation" children={<BookingConfirmation />} />
             <Route path="/get-started">
               <Questionnaire />
             </Route>
