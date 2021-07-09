@@ -34,7 +34,7 @@ const Signup = () => {
             }
         }
 
-        const baseUrl = 'http://localhost:8000'
+        const baseUrl = process.env.REACT_APP_API_URL
         try {
             const response = await axios.post(baseUrl + '/api/v1/users', postData, { withCredentials: true })
             if (response.status === 201) {

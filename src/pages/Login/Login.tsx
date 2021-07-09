@@ -13,7 +13,7 @@ const Login = () => {
     const [loginError, setLoginError] = useState('')
 
     const onFinish = async (values: any) => {
-        const baseUrl = 'http://localhost:8000'
+        const baseUrl = process.env.REACT_APP_API_URL
         try {
             const response = await axios.post(`${baseUrl}/api/v1/users/login`, values, {withCredentials: true})
             if (response.status === 200) {
