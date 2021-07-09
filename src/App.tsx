@@ -8,7 +8,6 @@ import {
   useLocation
 } from "react-router-dom";
 import { Menu, Button, Layout } from 'antd';
-import AboutAndPricing from './pages/AboutAndPricing/AboutAndPricing';
 import Faq from './pages/Faq/Faq';
 import Login from './pages/Login/Login';
 import Questionnaire from './pages/Questionnaire/Questionnaire';
@@ -19,6 +18,7 @@ import SingleTherapist from './pages/SingleTherapist/SingleTherapist';
 import Availability from './pages/Availability/Availability';
 import BookingConfirmation from './pages/BookingConfirmation/BookingConfirmation';
 import BookingConfirmed from './pages/BookingConfirmed/BookingConfirmed';
+import Sessions from './pages/Sessions/Sessions';
 
 const { Header } = Layout
 
@@ -45,8 +45,11 @@ const App = () => {
             <Menu.Item key="get-started" className='MenuItem'>
                   <Button className="AppHeader__Menu__Button"><Link to="/get-started">GET STARTED</Link></Button>
               </Menu.Item>
-              <Menu.Item key="about" className='MenuItem'>
-                  <Link to="/about">About and Pricing</Link>        
+              <Menu.Item key="sessions" className='MenuItem'>
+                  <Link to="/sessions">Sessions</Link>        
+              </Menu.Item>
+              <Menu.Item key="therapists" className='MenuItem'>
+                  <Link to="/therapists">Therapists</Link>        
               </Menu.Item>
               <Menu.Item key="faq" className='MenuItem'>
                   <Link to="/faq">FAQ</Link>
@@ -59,9 +62,6 @@ const App = () => {
               </Menu.Item>
           </Menu>
           <Switch>
-          <Route path="/about">
-              <AboutAndPricing />
-            </Route>
             <Route path="/faq">
               <Faq />
             </Route>
@@ -81,6 +81,7 @@ const App = () => {
             </Route>
             <Route path="/booking/confirmed" children={<BookingConfirmed />} />
             <Route path="/booking/confirmation" children={<BookingConfirmation />} />
+            <Route path="/sessions" children={<Sessions />} />
             <Route path="/get-started">
               <Questionnaire />
             </Route>
