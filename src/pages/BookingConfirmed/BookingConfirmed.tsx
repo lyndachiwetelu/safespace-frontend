@@ -22,7 +22,6 @@ const BookingConfirmed = () => {
         }
         const therapistName = bookings[0].therapist.name
         const therapistPic = bookings[0].therapist.setting.imageUrl
-        console.log(bookings)
         setTherapistName(therapistName)
         setTherapistPic(therapistPic)
         setSessions(bookings)

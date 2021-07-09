@@ -1,0 +1,118 @@
+.SessionBox__Details {
+    border: 1px solid #27a68f;
+    margin-top: 12px;
+}
+
+.SessionBox .SessionBox__Details p {
+    line-height: normal;
+    font-size: 17px;
+} 
+
+.SessionBox .SessionBox__Button--Join, .SessionBox .SessionBox__Button--Details  {
+    background: #27a68f;
+    color: white;
+    width: 100%;
+}
+
+.SessionBox .SessionBox__Button--Join[disabled]{
+   opacity: 80%;
+   background: #27a68f;
+   color: white;
+}
+
+
+.SessionBox .SessionBox__Button--Cancel[disabled] {
+    opacity: 80%;
+    background: rgba(209, 26, 26, 0.884);
+    color: white;
+ }
+
+
+.SessionBox .SessionBox__Button--Cancel {
+    background: rgba(209, 26, 26, 0.884);
+    color: white;
+    width: 100%;
+}
+
+
+.SessionBox__container {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  /* Hide the browser's default radio button */
+  .SessionBox__container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+  }
+  
+  /* Create a custom radio button */
+  .SessionBox__container__checkmark {
+    position:absolute;
+    top: 0px;
+    left: 0px;
+    height: 20px;
+    width: 20px;
+    background-color: #eee;
+    border-radius: 50%;
+  }
+  
+
+  .SessionBox__container:hover input ~ .SessionBox__container__checkmark {
+    background-color: #ccc;
+  }
+  
+ 
+  .SessionBox__container input:checked ~ .SessionBox__container__checkmark {
+    background-color: #27a68f;
+  }
+  
+  .SessionBox__container__checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+  
+  .SessionBox__container input:checked ~ .SessionBox__container__checkmark:after {
+    display: block;
+  }
+  
+  .SessionBox__container .SessionBox__container__checkmark:after {
+       top: 4px;
+      left: 4px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: white;
+  }
+
+.ant-modal-wrap.ant-modal-centered .ant-modal .ant-modal-content .ant-modal-footer {
+      display: flex;
+      justify-content: space-between;
+}
+
+.CancelConfirmedModal {
+    text-align: center;
+}
+
+.CancelConfirmedModal h3{
+    margin: 20px;
+}
+
+.CancelConfirmedModal button {
+    background: #27a68f;
+    color: white;
+}
+
+.CancelConfirmedModal button:hover {
+    border: 1px solid #27a68f;
+    color: #27a68f;
+}
