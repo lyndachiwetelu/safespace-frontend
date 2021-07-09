@@ -18,7 +18,7 @@ const Availability = () => {
 
     const fetchAvailabilitiesFortherapist = async(id:number) => {
         try {
-            const url = `http://localhost:8000/api/v1/availabilities/${id}`
+            const url = `${process.env.REACT_APP_API_URL}/api/v1/availabilities/${id}`
             const response = await axios.get(url, {withCredentials: true})
             if (response.status === 200) {
                 setAvailabilities(response.data)
@@ -32,7 +32,7 @@ const Availability = () => {
 
     const fetchTherapistData = useCallback(
         async(id: number) => {
-            const baseUrl = 'http://localhost:8000'
+            const baseUrl = process.env.REACT_APP_API_URL
             try {
                 const response = await axios.get(`${baseUrl}/api/v1/therapists/${id}`, { withCredentials: true})
                 if (response.status === 200) {

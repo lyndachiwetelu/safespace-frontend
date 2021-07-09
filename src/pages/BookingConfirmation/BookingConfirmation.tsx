@@ -25,7 +25,7 @@ const BookingConfirmation = () => {
         // store payment method also - non mvp
         console.log(paymentMethod.toUpperCase())
         const savedSessions = []
-        const url = "http://localhost:8000/api/v1/sessions"
+        const url = `${process.env.REACT_APP_API_URL}/api/v1/sessions`
         for (const selection of sessionData.sessions) {
             const session = {
                 from: moment(selection.start).format('HH:mm'),

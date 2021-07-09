@@ -14,7 +14,7 @@ const SessionBox = ( { session, type, fetch } : { session:any, type:string, fetc
     }
 
     const updateStatus = async (id: number) => {
-        const url = `http://localhost:8000/api/v1/sessions/${id}/status`
+        const url = `${process.env.REACT_APP_API_URL}/api/v1/sessions/${id}/status`
         const body = {
             status: 'cancelled'
         }

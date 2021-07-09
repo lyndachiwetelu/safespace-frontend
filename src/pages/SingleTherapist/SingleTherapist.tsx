@@ -17,7 +17,7 @@ const SingleTherapist = () => {
     }, [id])
 
     const fetchData = async(id: number) => {
-        const baseUrl = 'http://localhost:8000'
+        const baseUrl = process.env.REACT_APP_API_URL
         try {
             const response = await axios.get(`${baseUrl}/api/v1/therapists/${id}`, { withCredentials: true})
             if (response.status === 200) {

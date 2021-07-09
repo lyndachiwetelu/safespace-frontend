@@ -47,7 +47,7 @@ const Sessions = () => {
 
     const fetchSessions = useCallback( async () => {
         const userId = sessionStorage.getItem('userId')
-        const url = `http://localhost:8000/api/v1/sessions/patient/${userId}`
+        const url = `${process.env.REACT_APP_API_URL}/api/v1/sessions/patient/${userId}`
         try {
             const response = await axios.get(url, {withCredentials: true})
             if (response.status === 200) {

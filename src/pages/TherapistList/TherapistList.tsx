@@ -42,7 +42,7 @@ const TherapistList = () => {
     }, [userId, userSettings])
 
     const fetchTherapists = async (userId: number): Promise<void> => {
-        const baseUrl = 'http://localhost:8000'
+        const baseUrl = process.env.REACT_APP_API_URL
         try {
             const response = await axios.get(`${baseUrl}/api/v1/therapists/list/${userId}`, { withCredentials: true })
             setTherapists(response.data)
@@ -62,7 +62,7 @@ const TherapistList = () => {
                 media:values.media
         }
 
-        const baseUrl = 'http://localhost:8000'
+        const baseUrl = process.env.REACT_APP_API_URL
         try {
             const response = await axios.patch(`${baseUrl}/api/v1/users/${userId}/settings`, postData, { withCredentials: true })
             if (response.status === 200) {
