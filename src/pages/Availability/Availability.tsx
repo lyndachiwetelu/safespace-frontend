@@ -104,7 +104,7 @@ const Availability = () => {
     const continueToBookingConfirmation = (): void => {
        const dataToStore = {
            userId: sessionStorage.getItem('userId'),
-           therapist: therapist.id,
+           therapist,
            sessions: selection,
            price: therapist.therapistSetting.pricePerSession * selection.length
        }

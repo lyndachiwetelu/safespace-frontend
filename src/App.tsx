@@ -18,6 +18,7 @@ import TherapistList from './pages/TherapistList/TherapistList';
 import SingleTherapist from './pages/SingleTherapist/SingleTherapist';
 import Availability from './pages/Availability/Availability';
 import BookingConfirmation from './pages/BookingConfirmation/BookingConfirmation';
+import BookingConfirmed from './pages/BookingConfirmed/BookingConfirmed';
 
 const { Header } = Layout
 
@@ -78,6 +79,7 @@ const App = () => {
             <Route path="/therapists">
               <TherapistList />
             </Route>
+            <Route path="/booking/confirmed" children={<BookingConfirmed />} />
             <Route path="/booking/confirmation" children={<BookingConfirmation />} />
             <Route path="/get-started">
               <Questionnaire />

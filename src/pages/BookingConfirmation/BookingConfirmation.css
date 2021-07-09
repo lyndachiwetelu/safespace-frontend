@@ -1,0 +1,105 @@
+.BookingConfirmation {
+    text-align: center;
+}
+
+.BookingConfirmation .BookingConfirmation__Header { 
+    display: flex;
+    background: #27a68f;
+    height: auto;
+}
+
+.BookingConfirmation .BookingConfirmation__Header h1 { 
+    color: #fff;
+    font-size: 30px;
+    font-weight: bold;
+    margin-right: 20px;
+}
+
+
+.BookingConfirmation  h1:nth-child(2), .BookingConfirmation  h1:nth-child(4){ 
+    color: #27a68f;
+    font-size: 42px;
+    font-weight: normal;
+    margin-top: 20px;
+}
+
+.BookingConfirmation  p:nth-child(3){
+    line-height: 1.5em; 
+    color: gray;
+    font-size: 30px;
+    margin-top: 20px;
+}
+
+.BookingConfirmation .PaymentOptions {
+    display: flex;
+    flex-direction: column;
+}
+
+.BookingConfirmation .BookingConfirmation_Button {
+  background: #27a68f;
+  color: #fff;
+  width: 70%;
+}
+
+
+
+/* The container */
+.container {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 22px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  /* Hide the browser's default radio button */
+  .container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+  }
+  
+  /* Create a custom radio button */
+  .checkmark {
+    position:absolute;
+    top: 12px;
+    left: 30%;
+    height: 40px;
+    width: 40px;
+    background-color: #eee;
+    border-radius: 50%;
+  }
+  
+
+  .container:hover input ~ .checkmark {
+    background-color: #ccc;
+  }
+  
+ 
+  .container input:checked ~ .checkmark {
+    background-color: #27a68f;
+  }
+  
+  .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+  
+  .container input:checked ~ .checkmark:after {
+    display: block;
+  }
+  
+  .container .checkmark:after {
+       top: 9px;
+      left: 9px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: white;
+  }
