@@ -6,6 +6,7 @@
     display: flex;
     background: #27a68f;
     height: auto;
+    line-height: 3em;
 }
 
 .BookingConfirmation .BookingConfirmation__Header h1 { 
@@ -68,7 +69,7 @@
   .checkmark {
     position:absolute;
     top: 12px;
-    left: 30%;
+    left: 25%;
     height: 40px;
     width: 40px;
     background-color: #eee;

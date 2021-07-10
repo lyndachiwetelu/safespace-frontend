@@ -71,3 +71,10 @@ background:#fff;
 .AppHeader .ant-menu.AppHeader__Menu .ant-menu-overflow-item.ant-menu-item.ant-menu-item-selected.ant-menu-item-only-child.MenuItem span a {
   color:white;
 }
+
+
+@media screen and (max-width: 768px) {
+  .AppLogo {
+    font-size: 20px;
+  }
+}

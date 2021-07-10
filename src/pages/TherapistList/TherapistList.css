@@ -56,9 +56,14 @@
     width: 100%;
 }
 
-@media only screen and (max-width: 767px) {
+@media only screen and (min-width:500px) and (max-width: 767px) {
     .Therapist_List .TherapistList__therapistBox .TherapistBox__Image {
         width: 40%;
-        object-fit: cover;
+    }
+  }
+
+  @media only screen and (max-width: 500px) {
+    .Therapist_List .TherapistList__therapistBox .TherapistBox__Image {
+        width: 70%;
     }
   }

@@ -68,8 +68,14 @@
 }
 
 
-@media only screen and (max-width:767px) {
+@media only screen and (min-width:500px) and (max-width:767px) {
     .Therapist .Therapist__Col__About .Therapist__Col__About__Image {
         width: 40%;
+    }
+}
+
+@media only screen and (max-width:500px) {
+    .Therapist .Therapist__Col__About .Therapist__Col__About__Image {
+        width: 70%;
     }
 }
