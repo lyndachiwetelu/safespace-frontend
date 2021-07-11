@@ -22,7 +22,7 @@
 
 
 .SessionBox .SessionBox__Button--Cancel[disabled] {
-    opacity: 80%;
+    opacity: 0.8;
     background: rgba(209, 26, 26, 0.884);
     color: white;
  }
