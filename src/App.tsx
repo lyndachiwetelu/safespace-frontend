@@ -19,8 +19,10 @@ import Availability from './pages/Availability/Availability';
 import BookingConfirmation from './pages/BookingConfirmation/BookingConfirmation';
 import BookingConfirmed from './pages/BookingConfirmed/BookingConfirmed';
 import Sessions from './pages/Sessions/Sessions';
+import TherapistSignup from './pages/TherapistSignup/TherapistSignup';
 
 const { Header } = Layout
+const { SubMenu } = Menu
 
 const App = () => {
   
@@ -57,9 +59,16 @@ const App = () => {
               <Menu.Item key="how-it-works" className='MenuItem'>
                   <Link to="/how-it-works">How it works</Link>
               </Menu.Item>
-              <Menu.Item key="login" className='MenuItem'>
-                  <Link to="/login">Log in</Link>
+              
+              <SubMenu key="login" title="Login">
+              <Menu.Item key="login-patient" className='MenuItem'>
+                  <Link to="/login">Patient Log in</Link>
               </Menu.Item>
+              <Menu.Item key="therapists/signup" className='MenuItem'>
+                  <Link to="/therapists/signup">Therapist Log in</Link>
+              </Menu.Item>
+          
+            </SubMenu>
           </Menu>
           <Switch>
             <Route path="/faq">
@@ -75,6 +84,7 @@ const App = () => {
               <Signup />
             </Route>
             <Route path="/therapists/:id/availability" children={<Availability />} />
+            <Route path="/therapists/signup" children={<TherapistSignup />} />
             <Route path="/therapists/:id" children={<SingleTherapist />} />
             <Route path="/therapists">
               <TherapistList />
