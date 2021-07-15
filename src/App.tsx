@@ -21,6 +21,8 @@ import BookingConfirmed from './pages/BookingConfirmed/BookingConfirmed';
 import Sessions from './pages/Sessions/Sessions';
 import TherapistSignup from './pages/TherapistSignup/TherapistSignup';
 import TherapistSetPassword from './pages/TherapistSetPassword/TherapistSetPassword';
+import TherapistSettings from './pages/TherapistSettings/TherapistSettings';
+import TherapistLogin from './pages/TherapistLogin/TherapistLogin';
 
 const { Header } = Layout
 const { SubMenu } = Menu
@@ -86,7 +88,9 @@ const App = () => {
             </Route>
             <Route path="/therapists/:id/availability" children={<Availability />} />
             <Route path="/therapists/signup" children={<TherapistSignup />} />
+            <Route path="/therapists/login" children={<TherapistLogin />} />
             <Route path="/therapists/set-password" children={<TherapistSetPassword />} />
+            <Route path="/therapists/settings" children={<TherapistSettings />} />
             <Route path="/therapists/:id" children={<SingleTherapist />} />
 
             

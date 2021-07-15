@@ -1,12 +1,12 @@
 import { Col, Row } from "antd"
 import FullLayout from "../../components/Layout/FullLayout"
-import "./TherapistSignup.css"
+import "./TherapistLogin.css"
 import { Form, Input, Button, Layout } from 'antd';
 import { useHistory } from "react-router-dom";
 import axios from "axios";
 import { useState } from "react";
 
-const TherapistSignup = () => {
+const TherapistLogin = () => {
     const { Header } = Layout
 
     const history = useHistory()
@@ -15,15 +15,16 @@ const TherapistSignup = () => {
     const onFinish = async (values: any) => {
         const baseUrl = process.env.REACT_APP_API_URL
         try {
-            const response = await axios.get(`${baseUrl}/api/v1/invite/check/${values.invite}`, {withCredentials: true})
+            const response = await axios.post(`${baseUrl}/api/v1/therapists/login`, values, {withCredentials: true})
             if (response.status === 200) {
-                history.push({pathname: '/therapists/set-password', state: {invite: values.invite, email: values.email}})
-            } else {
-                setLoginError('There was an error signing you up')
+                sessionStorage.setItem('userId', response.data.id)
+                history.push({pathname: '/therapists/my/sessions'})
+            } else if (response.status === 400) {
+                setLoginError('Invalid Credentials')
             }
             
         } catch (err) {
-            setLoginError('Invalid Code!')
+            setLoginError('Invalid Credentials')
         }
         
       };
@@ -34,15 +35,15 @@ const TherapistSignup = () => {
 
     return (
         <FullLayout>
-            <Row className="TSignup">
+            <Row className="TLogin">
                 <Col lg={4} xs={2}></Col>
                 <Col lg={16} xs={20}>
-                    <Header className="TSignup__Col__Header">  
-                    <h1>Welcome to Therapist first time signup on Safespace!</h1> 
+                    <Header className="TLogin__Col__Header">  
+                    <h1>Already have a Therapist account? Login to SafeSpace!</h1> 
                     </Header> 
                     <Row>
                     <Col lg={4}></Col>
-                        <Col lg={16} xs={24} className="TSignup__Col__Form">
+                        <Col lg={16} xs={24} className="TLogin__Col__Form">
                         <span style={{color:'red'}}>{loginError}</span>
                           <Form
                             name="basic"
@@ -55,14 +56,6 @@ const TherapistSignup = () => {
                             >
 
                             <Form.Item
-                                label="Enter invite code"
-                                name="invite"
-                                rules={[{ required: true, message: 'Please enter invite code.' }]}
-                            >
-                                <Input />
-                            </Form.Item>
-
-                            <Form.Item
                                 label="Enter your email address"
                                 name="email"
                                 rules={[{ required: true, type: 'email', message: 'Please enter a valid email address.' }]}
@@ -70,17 +63,25 @@ const TherapistSignup = () => {
                                 <Input />
                             </Form.Item>
 
+                            <Form.Item
+                                label="Enter your password"
+                                name="password"
+                                rules={[{ required: true, message: 'Please input your password' }]}
+                            >
+                                <Input.Password />
+                            </Form.Item>
+
                         
-                            <Form.Item wrapperCol={{ span: 24 }} className="TSignup__Col__Form__Button">
+                            <Form.Item wrapperCol={{ span: 24 }} className="TLogin__Col__Form__Button">
                             <Button type="default" htmlType="submit">
-                                CONTINUE TO SIGNUP
+                                LOG IN NOW
                                 </Button>
                             </Form.Item>
                             </Form>
 
-                            <p>Already have a therapist account?</p>
-                            <Button className="TSignup__Col__Form__Button--Login" size="large" onClick={() => history.push('/therapists/login')}>
-                                LOG IN
+                            <p>Don't have a therapist account yet and got an invite code?</p>
+                            <Button className="TLogin__Col__Form__Button--Signup" size="large" onClick={() => history.push('/therapists/signup')}>
+                                SIGN UP
                             </Button>
                         </Col>
                         <Col lg={4}></Col>
@@ -93,4 +94,4 @@ const TherapistSignup = () => {
     )
 }
 
-export default TherapistSignup
+export default TherapistLogin
