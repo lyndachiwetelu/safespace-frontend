@@ -73,7 +73,7 @@ const TherapistSignup = () => {
                         
                             <Form.Item wrapperCol={{ span: 24 }} className="TSignup__Col__Form__Button">
                             <Button type="default" htmlType="submit">
-                                SIGN UP NOW
+                                CONTINUE TO SIGNUP
                                 </Button>
                             </Form.Item>
                             </Form>
