@@ -15,7 +15,7 @@
 }
 
 .SessionBox .SessionBox__Button--Join[disabled]{
-   opacity: 80%;
+   opacity: 0.8;
    background: #27a68f;
    color: white;
 }
