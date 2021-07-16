@@ -7,7 +7,8 @@ import {
   Link,
   useLocation
 } from "react-router-dom";
-import { Menu, Button, Layout } from 'antd';
+import { Menu, Button, Layout, Avatar } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
 import Faq from './pages/Faq/Faq';
 import Login from './pages/Login/Login';
 import Questionnaire from './pages/Questionnaire/Questionnaire';
@@ -24,6 +25,7 @@ import TherapistSetPassword from './pages/TherapistSetPassword/TherapistSetPassw
 import TherapistSettings from './pages/TherapistSettings/TherapistSettings';
 import TherapistLogin from './pages/TherapistLogin/TherapistLogin';
 import TherapistSessions from './pages/TherapistSessions/TherapistSessions';
+import TherapistAvailability from './pages/TherapistAvailability/TherapistAvailability';
 
 const { Header } = Layout
 const { SubMenu } = Menu
@@ -84,6 +86,17 @@ const App = () => {
               </Menu.Item>
           
             </SubMenu>
+
+            <SubMenu key="you" title="You" icon={<UserOutlined />}>
+              <Menu.Item key="therapist/settings" className='MenuItem'>
+                  <Link to="/therapists/settings">Profile Settings</Link>
+              </Menu.Item>
+              <Menu.Item key="therapists/availability" className='MenuItem'>
+                  <Link to="/therapists/availability">Availability</Link>
+              </Menu.Item>
+          
+            </SubMenu>
+            
           </Menu>
           <Switch>
             <Route path="/faq">
@@ -104,6 +117,7 @@ const App = () => {
             <Route path="/therapists/set-password" children={<TherapistSetPassword />} />
             <Route path="/therapists/settings" children={<TherapistSettings />} />
             <Route path="/therapists/my/sessions" children={<TherapistSessions />} />
+            <Route path="/therapists/availability" children={<TherapistAvailability />} />
             <Route path="/therapists/:id" children={<SingleTherapist />} />
 
             

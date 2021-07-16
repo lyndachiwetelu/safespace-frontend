@@ -25,7 +25,8 @@
     padding: 10px;
 }
 
-.TSettings .TSettings__Form .ant-btn.ant-btn-lg.TSettings__Form__Button {
+.TSettings .TSettings__Form button.TSettings__Form__Button{
     color: white;
     background: #27a68f;
+    width: 70%;
 }
