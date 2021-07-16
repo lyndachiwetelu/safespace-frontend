@@ -2,12 +2,21 @@ import { Col, Row, Layout} from 'antd'
 import axios from 'axios'
 import moment from 'moment'
 import { useCallback, useEffect, useState } from 'react'
+import { useHistory } from 'react-router-dom'
 import FullLayout from '../../components/Layout/FullLayout'
 import SessionBox from '../../components/SessionBox/SessionBox'
-import './Sessions.css'
+import './TherapistSessions.css'
 const { Header } = Layout
 
-const Sessions = () => {
+const TherapistSessions = () => {
+
+    const history = useHistory()
+    
+    let isTherapist = sessionStorage.getItem('isTherapist')
+    if (isTherapist !== 'true') {
+        history.push('/sessions')
+    }
+
     const [sessions, setSessions]: [sessions: {upcoming:any, past:any, active:any}, setSessions:any ] = useState({
         upcoming: [],
         past: [],
@@ -44,9 +53,9 @@ const Sessions = () => {
         return {upcoming, past, active}
     }    
 
-    const fetchSessions = useCallback( async () => {
+    const fetchTherapistSessions = useCallback( async () => {
         const userId = sessionStorage.getItem('userId')
-        const url = `${process.env.REACT_APP_API_URL}/api/v1/sessions/patient/${userId}`
+        const url = `${process.env.REACT_APP_API_URL}/api/v1/sessions/therapist/${userId}`
         try {
             const response = await axios.get(url, {withCredentials: true})
             if (response.status === 200) {
@@ -58,8 +67,8 @@ const Sessions = () => {
     }, [])
 
     useEffect(() => {
-        fetchSessions()
-    }, [fetchSessions])
+        fetchTherapistSessions()
+    }, [fetchTherapistSessions])
     
     return (
         <FullLayout>
@@ -72,7 +81,7 @@ const Sessions = () => {
                     {sessions.active.length < 1 ? <h2>You have no Active Sessions</h2> : null}
                     {
                     sessions.active.map((session:any) => (
-                        <SessionBox session={session} type="active" key={session.id} fetch={fetchSessions} />
+                        <SessionBox session={session} type="active" key={session.id} fetch={fetchTherapistSessions} />
                     )) 
                    }
                     
@@ -83,7 +92,7 @@ const Sessions = () => {
 
                     {
                         sessions.upcoming.map((session:any) => (
-                            <SessionBox session={session} type="upcoming" key={session.id} fetch={fetchSessions} />
+                            <SessionBox session={session} type="upcoming" key={session.id} fetch={fetchTherapistSessions} />
                         )) 
                     }
 
@@ -94,7 +103,7 @@ const Sessions = () => {
 
                     {
                         sessions.past.map((session:any) => (
-                            <SessionBox session={session} type="past" key={session.id} fetch={fetchSessions} />
+                            <SessionBox session={session} type="past" key={session.id} fetch={fetchTherapistSessions} />
                         )) 
                     }
 
@@ -105,4 +114,4 @@ const Sessions = () => {
     )
 }
 
-export default Sessions
+export default TherapistSessions

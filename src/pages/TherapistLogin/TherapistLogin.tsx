@@ -1,12 +1,12 @@
 import { Col, Row } from "antd"
 import FullLayout from "../../components/Layout/FullLayout"
-import "./Login.css"
+import "./TherapistLogin.css"
 import { Form, Input, Button, Layout } from 'antd';
 import { useHistory } from "react-router-dom";
 import axios from "axios";
 import { useState } from "react";
 
-const Login = () => {
+const TherapistLogin = () => {
     const { Header } = Layout
 
     const history = useHistory()
@@ -15,11 +15,11 @@ const Login = () => {
     const onFinish = async (values: any) => {
         const baseUrl = process.env.REACT_APP_API_URL
         try {
-            const response = await axios.post(`${baseUrl}/api/v1/users/login`, values, {withCredentials: true})
+            const response = await axios.post(`${baseUrl}/api/v1/therapists/login`, values, {withCredentials: true})
             if (response.status === 200) {
                 sessionStorage.setItem('userId', response.data.id)
-                sessionStorage.setItem('isTherapist', 'false')
-                history.push({pathname: '/therapists', state: {userId: response.data.id, settings: response.data.settings}})
+                sessionStorage.setItem('isTherapist', 'true')
+                history.push({pathname: '/therapists/my/sessions'})
             } else if (response.status === 400) {
                 setLoginError('Invalid Credentials')
             }
@@ -36,15 +36,15 @@ const Login = () => {
 
     return (
         <FullLayout>
-            <Row className="Login">
+            <Row className="TLogin">
                 <Col lg={4} xs={2}></Col>
                 <Col lg={16} xs={20}>
-                    <Header className="Login__Col__Header">  
-                    <h1>Already have an account? Login to SafeSpace!</h1> 
+                    <Header className="TLogin__Col__Header">  
+                    <h1>Already have a Therapist account? Login to SafeSpace!</h1> 
                     </Header> 
                     <Row>
                     <Col lg={4}></Col>
-                        <Col lg={16} xs={24} className="Login__Col__Form">
+                        <Col lg={16} xs={24} className="TLogin__Col__Form">
                         <span style={{color:'red'}}>{loginError}</span>
                           <Form
                             name="basic"
@@ -57,7 +57,7 @@ const Login = () => {
                             >
 
                             <Form.Item
-                                label="Enter your email Address"
+                                label="Enter your email address"
                                 name="email"
                                 rules={[{ required: true, type: 'email', message: 'Please enter a valid email address.' }]}
                             >
@@ -65,7 +65,7 @@ const Login = () => {
                             </Form.Item>
 
                             <Form.Item
-                                label="Enter your Password"
+                                label="Enter your password"
                                 name="password"
                                 rules={[{ required: true, message: 'Please input your password' }]}
                             >
@@ -73,15 +73,15 @@ const Login = () => {
                             </Form.Item>
 
                         
-                            <Form.Item wrapperCol={{ span: 24 }} className="Login__Col__Form__Button">
+                            <Form.Item wrapperCol={{ span: 24 }} className="TLogin__Col__Form__Button">
                             <Button type="default" htmlType="submit">
                                 LOG IN NOW
                                 </Button>
                             </Form.Item>
                             </Form>
 
-                            <p>Don't have an account yet?</p>
-                            <Button className="Login__Col__Form__Button--Signup" size="large" onClick={() => history.push('/get-started')}>
+                            <p>Don't have a therapist account yet and got an invite code?</p>
+                            <Button className="TLogin__Col__Form__Button--Signup" size="large" onClick={() => history.push('/therapists/signup')}>
                                 SIGN UP
                             </Button>
                         </Col>
@@ -95,4 +95,4 @@ const Login = () => {
     )
 }
 
-export default Login
+export default TherapistLogin

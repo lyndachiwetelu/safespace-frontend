@@ -19,13 +19,20 @@ import Availability from './pages/Availability/Availability';
 import BookingConfirmation from './pages/BookingConfirmation/BookingConfirmation';
 import BookingConfirmed from './pages/BookingConfirmed/BookingConfirmed';
 import Sessions from './pages/Sessions/Sessions';
+import TherapistSignup from './pages/TherapistSignup/TherapistSignup';
+import TherapistSetPassword from './pages/TherapistSetPassword/TherapistSetPassword';
+import TherapistSettings from './pages/TherapistSettings/TherapistSettings';
+import TherapistLogin from './pages/TherapistLogin/TherapistLogin';
+import TherapistSessions from './pages/TherapistSessions/TherapistSessions';
 
 const { Header } = Layout
+const { SubMenu } = Menu
 
 const App = () => {
   
   const location = useLocation()
   const [current, setCurrent] = useState('');
+  const [therapist, setTherapist] = useState(sessionStorage.getItem('isTherapist'));
 
   useEffect(() => {
     setCurrent(location.pathname.slice(1))
@@ -33,8 +40,18 @@ const App = () => {
 
   const handleClick = (e: any) => {
       setCurrent(e.key);
-    };
+  };
 
+  useEffect(() => {
+    let isTherapist = sessionStorage.getItem('isTherapist')
+    if (isTherapist === 'true') {
+        setTherapist('true')
+    } else {
+      setTherapist('false')
+    }
+  }, [therapist]);
+
+  
 
   return (
      <>
@@ -46,7 +63,7 @@ const App = () => {
                   <Button className="AppHeader__Menu__Button"><Link to="/get-started">GET STARTED</Link></Button>
               </Menu.Item>
               <Menu.Item key="sessions" className='MenuItem'>
-                  <Link to="/sessions">Sessions</Link>        
+                {therapist === 'false' ? <Link to="/sessions">Sessions</Link>  : <Link to="/therapists/my/sessions">Sessions</Link>   }     
               </Menu.Item>
               <Menu.Item key="therapists" className='MenuItem'>
                   <Link to="/therapists">Therapists</Link>        
@@ -57,9 +74,16 @@ const App = () => {
               <Menu.Item key="how-it-works" className='MenuItem'>
                   <Link to="/how-it-works">How it works</Link>
               </Menu.Item>
-              <Menu.Item key="login" className='MenuItem'>
-                  <Link to="/login">Log in</Link>
+              
+              <SubMenu key="login" title="Login">
+              <Menu.Item key="login-patient" className='MenuItem'>
+                  <Link to="/login">Patient Log in</Link>
               </Menu.Item>
+              <Menu.Item key="therapists/signup" className='MenuItem'>
+                  <Link to="/therapists/signup">Therapist Log in</Link>
+              </Menu.Item>
+          
+            </SubMenu>
           </Menu>
           <Switch>
             <Route path="/faq">
@@ -75,7 +99,14 @@ const App = () => {
               <Signup />
             </Route>
             <Route path="/therapists/:id/availability" children={<Availability />} />
+            <Route path="/therapists/signup" children={<TherapistSignup />} />
+            <Route path="/therapists/login" children={<TherapistLogin />} />
+            <Route path="/therapists/set-password" children={<TherapistSetPassword />} />
+            <Route path="/therapists/settings" children={<TherapistSettings />} />
+            <Route path="/therapists/my/sessions" children={<TherapistSessions />} />
             <Route path="/therapists/:id" children={<SingleTherapist />} />
+
+            
             <Route path="/therapists">
               <TherapistList />
             </Route>

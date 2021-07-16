@@ -20,6 +20,11 @@ const TherapistList = () => {
    
     let userId : number | null = null
     userId = parseInt(sessionStorage.getItem('userId') || '')
+    let isTherapist  = sessionStorage.getItem('isTherapist') || ''
+    if (isTherapist === 'true') {
+        userId = null
+    }
+    
     if (state !== undefined) {
         userId = state.userId
     } else if (!state && !userId) {

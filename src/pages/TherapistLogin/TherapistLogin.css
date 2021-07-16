@@ -1,0 +1,43 @@
+.TLogin__Col__Header {
+    background: #27a687;
+    height: auto;
+    line-height: 2em;
+    padding: 20px;
+    text-align: center;
+}
+
+.TLogin .TLogin__Col__Header h1 {
+    color: white;
+}
+
+.TLogin .TLogin__Col__Form {
+    padding-top: 20px;
+    text-align: center;
+}
+
+.TLogin__Col__Form__Button {
+    text-align: center;
+}
+
+.TLogin__Col__Form__Button button {
+   width: 50%;
+   background: #27a687;
+   color: white;
+}
+
+
+.TLogin__Col__Form__Button--Signup {
+    width: 50%;
+    background: #27a687;
+    color: white;
+}
+
+.TLogin__Col__Form__Button button:hover, .TLogin__Col__Form__Button button:focus {
+    background: #0A7360;
+    color: white;
+}
+
+.TLogin .TLogin__Col__Form__Button--Signup:hover, .TLogin .TLogin__Col__Form__Button--Signup:focus {
+    background: #0A7360;
+    color: white;
+}

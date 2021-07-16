@@ -1,12 +1,12 @@
 import { Col, Row } from "antd"
 import FullLayout from "../../components/Layout/FullLayout"
-import "./Login.css"
+import "./TherapistSignup.css"
 import { Form, Input, Button, Layout } from 'antd';
 import { useHistory } from "react-router-dom";
 import axios from "axios";
 import { useState } from "react";
 
-const Login = () => {
+const TherapistSignup = () => {
     const { Header } = Layout
 
     const history = useHistory()
@@ -15,17 +15,15 @@ const Login = () => {
     const onFinish = async (values: any) => {
         const baseUrl = process.env.REACT_APP_API_URL
         try {
-            const response = await axios.post(`${baseUrl}/api/v1/users/login`, values, {withCredentials: true})
+            const response = await axios.get(`${baseUrl}/api/v1/invite/check/${values.invite}`, {withCredentials: true})
             if (response.status === 200) {
-                sessionStorage.setItem('userId', response.data.id)
-                sessionStorage.setItem('isTherapist', 'false')
-                history.push({pathname: '/therapists', state: {userId: response.data.id, settings: response.data.settings}})
-            } else if (response.status === 400) {
-                setLoginError('Invalid Credentials')
+                history.push({pathname: '/therapists/set-password', state: {invite: values.invite, email: values.email}})
+            } else {
+                setLoginError('There was an error signing you up')
             }
             
         } catch (err) {
-            setLoginError('Invalid Credentials')
+            setLoginError('Invalid Code!')
         }
         
       };
@@ -36,15 +34,15 @@ const Login = () => {
 
     return (
         <FullLayout>
-            <Row className="Login">
+            <Row className="TSignup">
                 <Col lg={4} xs={2}></Col>
                 <Col lg={16} xs={20}>
-                    <Header className="Login__Col__Header">  
-                    <h1>Already have an account? Login to SafeSpace!</h1> 
+                    <Header className="TSignup__Col__Header">  
+                    <h1>Welcome to Therapist first time signup on Safespace!</h1> 
                     </Header> 
                     <Row>
                     <Col lg={4}></Col>
-                        <Col lg={16} xs={24} className="Login__Col__Form">
+                        <Col lg={16} xs={24} className="TSignup__Col__Form">
                         <span style={{color:'red'}}>{loginError}</span>
                           <Form
                             name="basic"
@@ -57,32 +55,32 @@ const Login = () => {
                             >
 
                             <Form.Item
-                                label="Enter your email Address"
+                                label="Enter invite code"
+                                name="invite"
+                                rules={[{ required: true, message: 'Please enter invite code.' }]}
+                            >
+                                <Input />
+                            </Form.Item>
+
+                            <Form.Item
+                                label="Enter your email address"
                                 name="email"
                                 rules={[{ required: true, type: 'email', message: 'Please enter a valid email address.' }]}
                             >
                                 <Input />
                             </Form.Item>
 
-                            <Form.Item
-                                label="Enter your Password"
-                                name="password"
-                                rules={[{ required: true, message: 'Please input your password' }]}
-                            >
-                                <Input.Password />
-                            </Form.Item>
-
                         
-                            <Form.Item wrapperCol={{ span: 24 }} className="Login__Col__Form__Button">
+                            <Form.Item wrapperCol={{ span: 24 }} className="TSignup__Col__Form__Button">
                             <Button type="default" htmlType="submit">
-                                LOG IN NOW
+                                CONTINUE TO SIGNUP
                                 </Button>
                             </Form.Item>
                             </Form>
 
-                            <p>Don't have an account yet?</p>
-                            <Button className="Login__Col__Form__Button--Signup" size="large" onClick={() => history.push('/get-started')}>
-                                SIGN UP
+                            <p>Already have a therapist account?</p>
+                            <Button className="TSignup__Col__Form__Button--Login" size="large" onClick={() => history.push('/therapists/login')}>
+                                LOG IN
                             </Button>
                         </Col>
                         <Col lg={4}></Col>
@@ -95,4 +93,4 @@ const Login = () => {
     )
 }
 
-export default Login
+export default TherapistSignup
