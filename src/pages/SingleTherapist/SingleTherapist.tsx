@@ -9,10 +9,6 @@ import checked from './../../images/checked.png'
 const SingleTherapist = () => {
     let { id } : { id: any} = useParams();
     const history = useHistory();
-    
-    if (typeof id !== "number") {
-        history.push("/404");
-    }
 
     const [therapist, setTherapist]: [therapist:any, setTherapist:any] = useState(null)
 

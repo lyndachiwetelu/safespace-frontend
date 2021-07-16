@@ -1,0 +1,31 @@
+
+.TSettings {
+    text-align: center;
+}
+
+.TSettings .TSettings__Col__Header {
+    background-color: #27a68f;
+    text-align: center;
+    padding: 8px;
+    height: auto;
+}
+
+
+.TSettings .TSettings__Col__Header h3 {
+    color: white;
+    line-height: 1em;
+    margin:0;
+}
+
+.TSettings .TSettings__Form .TSettings__Form--left {
+    padding: 10px;
+}
+
+.TSettings .TSettings__Form .TSettings__Form--right {
+    padding: 10px;
+}
+
+.TSettings .TSettings__Form .ant-btn.ant-btn-lg.TSettings__Form__Button {
+    color: white;
+    background: #27a68f;
+}

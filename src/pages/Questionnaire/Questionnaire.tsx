@@ -111,7 +111,7 @@ const Questionnaire = () => {
 
                 <Form.Item
                     name="media"
-                    label="Voice Video or Text"
+                    label="Voice, Video or Text"
                     labelCol={{lg: {span:24}}}
                     rules={[{ required: true, message: 'Please select your preferred media.', type: 'array' }]}
                 >
