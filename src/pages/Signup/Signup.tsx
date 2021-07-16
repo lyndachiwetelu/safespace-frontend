@@ -40,6 +40,7 @@ const Signup = () => {
             if (response.status === 201) {
                 sessionStorage.removeItem('questionnaire')
                 sessionStorage.setItem('userId', response.data.id)
+                sessionStorage.setItem('isTherapist', 'false')
                 history.push({pathname: '/therapists', state:{ userId: response.data.id, settings: response.data.settings }})
             } else {
                 console.log('STATUS IS NOT 201')

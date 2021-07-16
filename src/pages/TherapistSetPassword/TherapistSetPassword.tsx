@@ -26,6 +26,7 @@ const TherapistSetPassword = () => {
             const response = await axios.post(`${baseUrl}/api/v1/therapists`, data, {withCredentials: true})
             if (response.status === 201) {
                 sessionStorage.setItem('userId', response.data.id)
+                sessionStorage.setItem('isTherapist', 'true')
                 history.push({pathname: '/therapists/settings'})
             } else {
                 setSignupError('There was an error signing you up!')
