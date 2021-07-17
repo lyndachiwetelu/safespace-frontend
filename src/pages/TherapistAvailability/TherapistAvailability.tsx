@@ -25,9 +25,10 @@ const TherapistAvailability = () => {
         setVisible(true);
     };
 
-    const handleOk = () => {
+    const handleOk =  useCallback(() => {
         setVisible(false);
-    };
+        window.location.reload();
+    }, [setVisible]);
 
     const handleCancel = () => {
         setVisible(false);
@@ -94,7 +95,9 @@ const TherapistAvailability = () => {
         }
 
     } catch(err) {
-        // handle error
+        if (err.response.status === 409) {
+            message.error('Time Period already exists')
+        }
     }
     
     }, [availability, dateSelected, history])
