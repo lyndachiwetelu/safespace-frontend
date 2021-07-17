@@ -66,6 +66,10 @@ const TherapistAvailability = () => {
         }
 
     const addAvailability = useCallback( async () => {
+    if (availability.length < 2) {
+        message.error('Please select a time range. Start and End.')
+        return
+    }
     const from: string = availability[0].format('HH:mm');
     const to: string  = availability[1].format('HH:mm');
     const data = {
@@ -108,7 +112,7 @@ const TherapistAvailability = () => {
         onCancel={handleCancel}
         okText="I'm done"
       >
-        <TimePicker.RangePicker defaultValue={[moment(), moment().add(1, 'hours')]} onOk={(avail) => setAvailability(avail)}/>
+        <TimePicker.RangePicker format="HH:mm" minuteStep={15} defaultValue={[moment(), moment().add(1, 'hours')]} onOk={(avail) => setAvailability(avail)} onChange={(avail) => setAvailability(avail)}/>
         <Button onClick={() => {addAvailability()}}>Add Availability</Button>
       </Modal>
             <div className='TAvailability'>
