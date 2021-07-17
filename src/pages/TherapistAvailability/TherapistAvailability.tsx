@@ -90,7 +90,7 @@ const TherapistAvailability = () => {
         }
 
     } catch(err) {
-        console.log(err)
+        // handle error
     }
     
     }, [availability, dateSelected, history])
