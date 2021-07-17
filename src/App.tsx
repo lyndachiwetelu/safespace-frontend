@@ -7,7 +7,7 @@ import {
   Link,
   useLocation
 } from "react-router-dom";
-import { Menu, Button, Layout, Avatar } from 'antd';
+import { Menu, Button, Layout} from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import Faq from './pages/Faq/Faq';
 import Login from './pages/Login/Login';

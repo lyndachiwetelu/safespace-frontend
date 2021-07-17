@@ -1,0 +1,24 @@
+.TAvailability {
+    text-align: center;
+}
+
+.TAvailability__Header {
+    background-color: #27a68f;
+}
+
+.TAvailability__Header h3{
+    color: #ffffff;
+}
+
+.TAvailability__Header .TAvailability__Header--Info {
+    justify-content: center;
+    display: flex;
+}
+
+.TAvailability__Header .TAvailability__Header--Info  button {
+    background-color: #27a68f;
+    color: #ffffff;
+    margin-top: 15px;
+    margin-left: 10px;
+
+}
