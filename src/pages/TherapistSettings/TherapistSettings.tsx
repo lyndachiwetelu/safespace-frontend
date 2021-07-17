@@ -72,8 +72,6 @@ const TherapistSettings = () => {
         } catch (e) {
             message.error('Profile not updated! Please try again.')
         }
-
-        console.log('DATA TO SEND', data)
     }
 
     const getBase64 = (img:any, callback:any) => {
