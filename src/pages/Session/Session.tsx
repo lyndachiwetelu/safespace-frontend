@@ -1,18 +1,24 @@
-import { Button, Form, Input} from "antd";
+import { Button, Col, Form, Input, Layout, Row} from "antd";
+import moment from "moment";
 import Peer from "peerjs";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import FullLayout from "../../components/Layout/FullLayout";
+import MessageBubble from "../../components/MessageBubble/MessageBubble";
 import './Session.css'
 
 const Session = () => {
+    const history = useHistory();
+    const { Header } = Layout
     const { id: sessionId }: {id:any } = useParams()
     const urlArray = process.env.REACT_APP_API_URL?.split(':')
     const host = urlArray?.[1] || '';
     const divRef: any = useRef()
+    const messagesEndRef: any = useRef()
     const [messages, setMessages]: [messages: Array<any>, setMessages: Function] = useState([])
     const [cPeer, setCPeer]: [any, Function] = useState(null)
     const [message, setMessage]: [any, Function] = useState('')
+    const [form] = Form.useForm()
 
     const serverPort = parseInt(process.env.REACT_APP_SERVER_PORT || '') || 8000
     const userId = sessionStorage.getItem('userId') || ''
@@ -20,6 +26,7 @@ const Session = () => {
     const setUpHostConnection = useCallback( () => {
         const clientConnections: Array<any> = []
         const hostPeer = new Peer(`session-${sessionId}-chat`, {
+            debug: 3,
             host,
             port: serverPort,
             path: '/chat'
@@ -38,18 +45,20 @@ const Session = () => {
 
     const setUpClientConnection = useCallback( () => {
         const peer = new Peer(userId, {
+            debug: 3,
             host,
             port: serverPort,
             path: '/chat'
         });
     
-        peer.on('open', function(id) {
+        peer.on('open', (id) => {
             const conn = peer.connect(`session-${sessionId}-chat`);
             conn.on('open', () => {
                 setCPeer(conn)
             });
             conn.on('data', (data:any) => {
                setMessages((messages:Array<any>) => {
+                messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
                 return [...messages, data]
                })
             })
@@ -59,37 +68,47 @@ const Session = () => {
     useEffect(() => {
         setUpHostConnection()
         setUpClientConnection()
-    }, [setUpClientConnection, setUpHostConnection])
+    }, [setUpClientConnection, setUpHostConnection, history.location.pathname])
 
     const sendMessage = () => {
-        console.log(`Sending message: ${message}`)
-        if (message) {
-            cPeer.send(message)
+        if (message && cPeer) {
+            cPeer.send({message, userId, key: moment().format('x') + userId})
         }
-     }
+        messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
+        form.setFieldsValue({message: ''})
+    }
 
     return (
         <FullLayout>
-            <h1>Session</h1>
-            <div ref={divRef}>
-                <h1>Messages</h1>
-                { messages.map((message:any) => {
-                    return <p key={message}> {message}</p>
-                })}
-            </div>
-            <Form>
-                <Form.Item label='Add a Message' name='message'>
-                    <Input value={message} onChange={(e) => {
-                        setMessage(e.target.value)
-                    }
-                    }>
-                    </Input>
-                </Form.Item>
+            <Row className="Session">
+                <Col span={6}></Col>
+                <Col span={18} className="Session__Col--Messages">
+                    <Header className="Session__Col__Header">
+                        <p>Status: Active Session</p>
+                        <p>Time Used: 15 Minutes </p>
+                        <p>Time Remaining: 30 Minutes </p>
+                    </Header>
+                    <div ref={divRef} className="Session__Col__MessageList">
+                        { messages.map((message:any) => {
+                            return <MessageBubble type={message.userId !== userId ? 'other': 'same'} message={message.message} key={message.key}/>
+                        })}
+                        <div ref={messagesEndRef} style={{marginBottom:'80px'}}></div>
+                    </div>
+                    <Form form={form} layout="inline" className="Session__Form" >
+                        <Form.Item name='message' style={{ width: "60%" }}>
+                        <Input size="large" value={message} onChange={(e) => {
+                                setMessage(e.target.value)
+                            }
+                            } />
+                        </Form.Item>
 
-                <Form.Item>
-                    <Button type='primary' htmlType='submit' onClick={() => sendMessage()}>Send</Button>
-                </Form.Item>
-            </Form>
+                        <Form.Item>
+                            <Button size="large" className="Session__Form__Button" htmlType='submit' onClick={() => sendMessage()}>Send Message</Button>
+                        </Form.Item>
+                    </Form>
+                </Col>
+            </Row>
+            
         </FullLayout>
     );
 }

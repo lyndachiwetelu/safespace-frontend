@@ -1,0 +1,37 @@
+.Session .Session__Col__Header {
+    background-color: #27a68f;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.Session .Session__Col--Messages {
+    height: 85vh;
+    background-color: #e9faf7;
+    display: flex;
+    flex-direction: column;
+}
+
+.Session .Session__Col__Header p{
+    color: white;
+    line-height: normal;
+}
+
+.Session__Col__MessageList {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+    overflow:auto;
+}
+
+.Session .Session__Form button.Session__Form__Button {
+    background-color: #27a68f;
+    color: white;
+}
+
+.Session .Session__Form {
+    width: 100%;
+    position: fixed;
+    top:80vh;
+}
