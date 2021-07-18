@@ -98,7 +98,7 @@ const Availability = () => {
     const disabledDate = (current:any) => {
         return availabilities.filter((avail:any) => { 
             return current && moment(avail.day).isSame(current.format('YYYY-MM-DD'), 'day')
-        }).length <= 0
+        }).length <= 0 || current.diff(moment(), 'days') < 0
     }
 
     const continueToBookingConfirmation = (): void => {
