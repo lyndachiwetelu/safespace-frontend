@@ -35,3 +35,40 @@
     position: fixed;
     top:80vh;
 }
+.Session .Session__Col--UserData {
+    text-align: center;
+}
+
+.Session .Session__Col--UserData img {
+    border-radius: 50%;
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+}
+
+.Session .Session__Col--UserData h3 {
+    color: #0a7360;
+    text-transform: uppercase;
+    line-height: normal;
+    margin-top: 20px;
+}
+
+.Session .Session__Col--UserData .Media {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.Session .Session__Col--UserData .Media img{
+    width: 50px;
+    height: 50px;
+}
+
+.Session .Session__Col--UserData h4{
+    margin-top: 15px;
+    line-height: 1.5em;
+}
+
+.Session .Session__Col--UserData  p {
+    line-height: normal;
+    padding: 5px 20px 0 20px;
+}
