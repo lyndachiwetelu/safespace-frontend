@@ -39,14 +39,12 @@ const Session = () => {
 
     const setUpClientConnection = useCallback( () => {
         const peer = new Peer(userId, {
-            debug: 3,
             host,
             port: serverPort,
             path: '/chat'
         });
     
         peer.on('open', function(id) {
-            console.log('My peer ID is: ' + id);
             const conn = peer.connect(`session-${sessionId}-chat`);
             conn.on('open', () => {
                 setCPeer(conn)
