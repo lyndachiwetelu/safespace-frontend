@@ -106,6 +106,10 @@ const TherapistAvailability = () => {
         fetchAvailabilities()
     }, [addAvailability]);
 
+    const disableDate = (currentDate: any) => {
+        return currentDate.diff(moment(), 'days') < 0
+    }
+
     return (
         <FullLayout>
         <Modal
@@ -117,14 +121,18 @@ const TherapistAvailability = () => {
       >
         <TimePicker.RangePicker format="HH:mm" minuteStep={15} defaultValue={[moment(), moment().add(1, 'hours')]} onOk={(avail) => setAvailability(avail)} onChange={(avail) => setAvailability(avail)}/>
         <Button onClick={() => {addAvailability()}}>Add Availability</Button>
+        <h3 style={{marginTop:'20px'}}>Your Availabilities</h3>
+        <ul>
+        { getAvailabilityDataForDay(moment(dateSelected)).map((item:any) => (<li key={item.id}> {item.from} - {item.to} </li>) )}
+        </ul>
       </Modal>
             <div className='TAvailability'>
                 <Header className="TAvailability__Header">  
                 
-                {dateSelected ? (<div className="TAvailability__Header--Info"><h3>Enter Availability For Date: {dateSelected}</h3> 
+                {dateSelected ? (<div className="TAvailability__Header--Info"><h3>Date: {dateSelected}</h3> 
                     <Button onClick={showModal}>Add Now</Button> </div>) : (<h3>Select Date</h3>)}   
                     </Header> 
-                <Calendar dateCellRender={dateCellRender} onSelect={onDateSelected} />
+                <Calendar dateCellRender={dateCellRender} onSelect={onDateSelected} disabledDate={disableDate} />
             </div>
         </FullLayout>
     )

@@ -51,7 +51,7 @@ const App = () => {
     } else {
       setTherapist('false')
     }
-  }, [therapist]);
+  }, [location]);
 
   
 
@@ -67,9 +67,9 @@ const App = () => {
               <Menu.Item key="sessions" className='MenuItem'>
                 {therapist === 'false' ? <Link to="/sessions">Sessions</Link>  : <Link to="/therapists/my/sessions">Sessions</Link>   }     
               </Menu.Item>
-              <Menu.Item key="therapists" className='MenuItem'>
+              {therapist === 'false' ? (<Menu.Item key="therapists" className='MenuItem'>
                   <Link to="/therapists">Therapists</Link>        
-              </Menu.Item>
+              </Menu.Item>) : null}
               <Menu.Item key="faq" className='MenuItem'>
                   <Link to="/faq">FAQ</Link>
               </Menu.Item>
@@ -77,7 +77,7 @@ const App = () => {
                   <Link to="/how-it-works">How it works</Link>
               </Menu.Item>
               
-              <SubMenu key="login" title="Login">
+              <SubMenu key="login" title="Login" className="AppHeader__Menu__SubMenu">
               <Menu.Item key="login-patient" className='MenuItem'>
                   <Link to="/login">Patient Log in</Link>
               </Menu.Item>
@@ -87,7 +87,7 @@ const App = () => {
           
             </SubMenu>
 
-            <SubMenu key="you" title="You" icon={<UserOutlined />}>
+            { therapist === 'true' ? (<SubMenu key="you" title="You" className="AppHeader__Menu__SubMenu" icon={<UserOutlined />}>
               <Menu.Item key="therapist/settings" className='MenuItem'>
                   <Link to="/therapists/settings">Profile Settings</Link>
               </Menu.Item>
@@ -95,7 +95,7 @@ const App = () => {
                   <Link to="/therapists/availability">Availability</Link>
               </Menu.Item>
           
-            </SubMenu>
+            </SubMenu>): null}
             
           </Menu>
           <Switch>
