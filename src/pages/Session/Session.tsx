@@ -27,7 +27,6 @@ const Session = () => {
 
         hostPeer.on('connection', function(conn) {
             clientConnections.push(conn);
-            console.log('CONN COUNT', clientConnections.length)
             conn.on('data', (data:any) => { 
                 clientConnections.forEach((clientConn:any) => {
                     clientConn.send(data);
