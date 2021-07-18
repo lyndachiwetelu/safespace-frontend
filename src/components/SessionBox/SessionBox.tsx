@@ -3,8 +3,10 @@ import { useState } from 'react'
 import './SessionBox.css'
 import checked from './../../images/checked.png'
 import axios from 'axios'
+import { useHistory } from 'react-router-dom'
 
 const SessionBox = ( { session, type, fetch, isTherapist = false  } : { session:any, type:string, fetch:Function, isTherapist?: boolean} ) => {
+    const history = useHistory()
     const isDisabled = (time: string, type: string ) => {
         if (time === "upcoming" && type === "join") {
             return true
@@ -109,7 +111,7 @@ const SessionBox = ( { session, type, fetch, isTherapist = false  } : { session:
                 
                 </Col>
                 <Col lg={3}>
-                   { type === 'upcoming' || type === 'active' ? <Button size="large" className="SessionBox__Button--Join" disabled={isDisabled(type, 'join')}>JOIN</Button> : null}
+                   { type === 'upcoming' || type === 'active' ? <Button size="large" className="SessionBox__Button--Join" disabled={isDisabled(type, 'join')} onClick={()=>{ history.push(`/session/${session.id}`)}}>JOIN</Button> : null}
                    { type === 'past' ? <Button size="large" className="SessionBox__Button--Details">DETAILS</Button> : null }
                 </Col>
                 <Col lg={3}>
