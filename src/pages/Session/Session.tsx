@@ -23,6 +23,8 @@ const Session = () => {
     const serverPort = parseInt(process.env.REACT_APP_SERVER_PORT || '') || 8000
     const userId = sessionStorage.getItem('userId') || ''
 
+    const [isConnected, setIsConnected] = useState(false)
+
     const setUpHostConnection = useCallback( () => {
         const clientConnections: Array<any> = []
         const hostPeer = new Peer(`session-${sessionId}-chat`, {
@@ -32,19 +34,24 @@ const Session = () => {
             path: '/chat'
         });
 
-        hostPeer.on('connection', function(conn) {
-            clientConnections.push(conn);
-            conn.on('data', (data:any) => { 
-                clientConnections.forEach((clientConn:any) => {
-                    clientConn.send(data);
-
+        hostPeer.on('open', () => {
+            setIsConnected(true)
+            hostPeer.on('connection', function(conn) {
+                clientConnections.push(conn);
+                conn.on('data', (data:any) => { 
+                    clientConnections.forEach((clientConn:any) => {
+                        clientConn.send(data);
+    
+                    })
                 })
-            })
-        });
+            });
+        
+        })
+ 
     }, [host, serverPort, sessionId])
 
     const setUpClientConnection = useCallback( () => {
-        const peer = new Peer(userId, {
+        const peer = new Peer(`${userId}${moment().format('x')}`, {
             debug: 3,
             host,
             port: serverPort,
@@ -57,7 +64,7 @@ const Session = () => {
                 setCPeer(conn)
             });
             conn.on('data', (data:any) => {
-               setMessages((messages:Array<any>) => {
+                setMessages((messages:Array<any>) => {
                 messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
                 return [...messages, data]
                })
@@ -67,8 +74,12 @@ const Session = () => {
 
     useEffect(() => {
         setUpHostConnection()
+    }, [setUpHostConnection, history.location.pathname])
+
+    useEffect(() => {
         setUpClientConnection()
-    }, [setUpClientConnection, setUpHostConnection, history.location.pathname])
+    }, [setUpClientConnection, setUpHostConnection, isConnected])
+
 
     const sendMessage = () => {
         if (message && cPeer) {
@@ -99,7 +110,7 @@ const Session = () => {
                         <Input size="large" value={message} onChange={(e) => {
                                 setMessage(e.target.value)
                             }
-                            } />
+                            }/>
                         </Form.Item>
 
                         <Form.Item>
