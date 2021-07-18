@@ -81,7 +81,7 @@ const TherapistSessions = () => {
                     {sessions.active.length < 1 ? <h2>You have no Active Sessions</h2> : null}
                     {
                     sessions.active.map((session:any) => (
-                        <SessionBox session={session} type="active" key={session.id} fetch={fetchTherapistSessions} />
+                        <SessionBox session={session} type="active" key={session.id} fetch={fetchTherapistSessions} isTherapist={true} />
                     )) 
                    }
                     
@@ -92,7 +92,7 @@ const TherapistSessions = () => {
 
                     {
                         sessions.upcoming.map((session:any) => (
-                            <SessionBox session={session} type="upcoming" key={session.id} fetch={fetchTherapistSessions} />
+                            <SessionBox session={session} type="upcoming" key={session.id} fetch={fetchTherapistSessions} isTherapist={true}  />
                         )) 
                     }
 
@@ -103,7 +103,7 @@ const TherapistSessions = () => {
 
                     {
                         sessions.past.map((session:any) => (
-                            <SessionBox session={session} type="past" key={session.id} fetch={fetchTherapistSessions} />
+                            <SessionBox session={session} type="past" key={session.id} fetch={fetchTherapistSessions} isTherapist={true} />
                         )) 
                     }
 
