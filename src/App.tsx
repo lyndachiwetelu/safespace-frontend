@@ -7,7 +7,8 @@ import {
   Link,
   useLocation
 } from "react-router-dom";
-import { Menu, Button, Layout } from 'antd';
+import { Menu, Button, Layout} from 'antd';
+import { UserOutlined } from '@ant-design/icons';
 import Faq from './pages/Faq/Faq';
 import Login from './pages/Login/Login';
 import Questionnaire from './pages/Questionnaire/Questionnaire';
@@ -24,6 +25,7 @@ import TherapistSetPassword from './pages/TherapistSetPassword/TherapistSetPassw
 import TherapistSettings from './pages/TherapistSettings/TherapistSettings';
 import TherapistLogin from './pages/TherapistLogin/TherapistLogin';
 import TherapistSessions from './pages/TherapistSessions/TherapistSessions';
+import TherapistAvailability from './pages/TherapistAvailability/TherapistAvailability';
 
 const { Header } = Layout
 const { SubMenu } = Menu
@@ -49,7 +51,7 @@ const App = () => {
     } else {
       setTherapist('false')
     }
-  }, [therapist]);
+  }, [location]);
 
   
 
@@ -65,9 +67,9 @@ const App = () => {
               <Menu.Item key="sessions" className='MenuItem'>
                 {therapist === 'false' ? <Link to="/sessions">Sessions</Link>  : <Link to="/therapists/my/sessions">Sessions</Link>   }     
               </Menu.Item>
-              <Menu.Item key="therapists" className='MenuItem'>
+              {therapist === 'false' ? (<Menu.Item key="therapists" className='MenuItem'>
                   <Link to="/therapists">Therapists</Link>        
-              </Menu.Item>
+              </Menu.Item>) : null}
               <Menu.Item key="faq" className='MenuItem'>
                   <Link to="/faq">FAQ</Link>
               </Menu.Item>
@@ -75,7 +77,7 @@ const App = () => {
                   <Link to="/how-it-works">How it works</Link>
               </Menu.Item>
               
-              <SubMenu key="login" title="Login">
+              <SubMenu key="login" title="Login" className="AppHeader__Menu__SubMenu">
               <Menu.Item key="login-patient" className='MenuItem'>
                   <Link to="/login">Patient Log in</Link>
               </Menu.Item>
@@ -84,6 +86,17 @@ const App = () => {
               </Menu.Item>
           
             </SubMenu>
+
+            { therapist === 'true' ? (<SubMenu key="you" title="You" className="AppHeader__Menu__SubMenu" icon={<UserOutlined />}>
+              <Menu.Item key="therapist/settings" className='MenuItem'>
+                  <Link to="/therapists/settings">Profile Settings</Link>
+              </Menu.Item>
+              <Menu.Item key="therapists/availability" className='MenuItem'>
+                  <Link to="/therapists/availability">Availability</Link>
+              </Menu.Item>
+          
+            </SubMenu>): null}
+            
           </Menu>
           <Switch>
             <Route path="/faq">
@@ -104,6 +117,7 @@ const App = () => {
             <Route path="/therapists/set-password" children={<TherapistSetPassword />} />
             <Route path="/therapists/settings" children={<TherapistSettings />} />
             <Route path="/therapists/my/sessions" children={<TherapistSessions />} />
+            <Route path="/therapists/availability" children={<TherapistAvailability />} />
             <Route path="/therapists/:id" children={<SingleTherapist />} />
 
             

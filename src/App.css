@@ -30,11 +30,41 @@ padding:0;
 background:#fff;
 }
 
-.AppHeader .AppHeader__Menu .MenuItem:hover {
+.AppHeader .AppHeader__Menu .MenuItem:hover, .AppHeader .AppHeader__Menu .MenuItem:hover:after{
   color: white;
   background: #27a68f;
   border-bottom: 2px solid #27a68f;
 
+}
+
+.ant-menu-overflow-item.ant-menu-submenu.ant-menu-submenu-horizontal.AppHeader__Menu__SubMenu:hover {
+  color: white;
+  background: #27a68f;
+}
+
+.ant-menu-overflow-item.ant-menu-submenu.ant-menu-submenu-horizontal.AppHeader__Menu__SubMenu:hover span{
+  color: white;
+}
+
+.ant-menu-overflow-item.ant-menu-submenu.ant-menu-submenu-horizontal.AppHeader__Menu__SubMenu.ant-menu-submenu-active::after {
+  color: #27a68f;
+  border: 0;
+}
+
+.ant-menu-submenu.ant-menu-submenu-popup.ant-menu.ant-menu-light ul li.ant-menu-item.ant-menu-item-only-child.MenuItem:hover{
+ background: #27a68f;
+}
+
+.ant-menu-submenu.ant-menu-submenu-popup.ant-menu.ant-menu-light ul li.ant-menu-item.ant-menu-item-only-child.MenuItem span a{
+  color: #0a7360;
+ }
+
+.ant-menu-submenu.ant-menu-submenu-popup.ant-menu.ant-menu-light ul li.ant-menu-item.ant-menu-item-only-child.MenuItem:hover a{
+  color: #fff;
+}
+
+.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item:hover, .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu:hover, .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-active, .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu-active, .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-open, .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu-open, .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-selected, .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu-selected {
+  color: #0a7360;
 }
 
 .AppHeader .AppHeader__Menu .MenuItem > span > a:hover, .AppHeader .AppHeader__Menu .MenuItem > span > a:focus, .AppHeader .AppHeader__Menu .MenuItem > span > a:active {

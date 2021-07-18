@@ -1,6 +1,6 @@
 import { Col, Row, Layout, Button } from "antd"
 import axios from "axios"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useHistory, useLocation } from "react-router-dom"
 import FullLayout from "../../components/Layout/FullLayout"
 import './TherapistList.css'
@@ -17,6 +17,8 @@ const { Option } = Select;
 const TherapistList = () => {
     const { state } :  { state: any } = useLocation()
     const history = useHistory()
+
+    const [form] = Form.useForm()
    
     let userId : number | null = null
     userId = parseInt(sessionStorage.getItem('userId') || '')
@@ -44,9 +46,9 @@ const TherapistList = () => {
         if (userId !== null) {
             fetchTherapists(userId)
         }
-    }, [userId, userSettings])
+    }, [userId])
 
-    const fetchTherapists = async (userId: number): Promise<void> => {
+    const fetchTherapists = async (userId: any): Promise<void> => {
         const baseUrl = process.env.REACT_APP_API_URL
         try {
             const response = await axios.get(`${baseUrl}/api/v1/therapists/list/${userId}`, { withCredentials: true })
@@ -54,6 +56,30 @@ const TherapistList = () => {
         } catch (err) {
         }
     }
+
+    const fetchUserSettings = useCallback(async (userId: number): Promise<void> => {
+        const baseUrl = process.env.REACT_APP_API_URL
+        try {
+            const response = await axios.get(`${baseUrl}/api/v1/users/${userId}/settings`, { withCredentials: true })
+            if (response.status === 200) {
+                 form.resetFields()
+                 form.setFieldsValue({
+                     media: response.data.media.map((medium:any)=> medium.mediaKey),
+                     ailments: response.data.ailments.map((ailment:any)=> ailment.ailmentKey),
+                     couplesTherapy: response.data.couplesTherapy,
+                     religiousTherapy: response.data.religiousTherapy,
+                 })
+            }
+        } catch (err) {
+        }
+    }, [form])
+
+    useEffect(() => {
+        if (!state?.settings && userId !== null) {
+            fetchUserSettings(userId)
+        }
+
+    }, [fetchUserSettings, history.location.pathname, state?.settings, userId])
 
     const handleTherapistLinkClick = (id: number): void  => {
         history.push(`/therapists/${id}`)
@@ -72,13 +98,15 @@ const TherapistList = () => {
             const response = await axios.patch(`${baseUrl}/api/v1/users/${userId}/settings`, postData, { withCredentials: true })
             if (response.status === 200) {
                setUserSettings(response.data)
+               fetchTherapists(userId)
             } else {
                 console.log('STATUS IS NOT 200')
             }
         } catch (err) {
             // handle error
         }
-    };
+    }
+
     return (
         <FullLayout>
             <Row className='Therapist_List'>
@@ -90,6 +118,7 @@ const TherapistList = () => {
                         layout="vertical"
                         className="Therapist_List__Col__Criteria__Form"
                         onFinish={onFinish}
+                        form={form}
                     >
                     <Form.Item
                             name="ailments"

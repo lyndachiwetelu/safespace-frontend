@@ -4,7 +4,7 @@ import './SessionBox.css'
 import checked from './../../images/checked.png'
 import axios from 'axios'
 
-const SessionBox = ( { session, type, fetch } : { session:any, type:string, fetch:Function} ) => {
+const SessionBox = ( { session, type, fetch, isTherapist = false  } : { session:any, type:string, fetch:Function, isTherapist?: boolean} ) => {
     const isDisabled = (time: string, type: string ) => {
         if (time === "upcoming" && type === "join") {
             return true
@@ -104,7 +104,7 @@ const SessionBox = ( { session, type, fetch } : { session:any, type:string, fetc
                    <Row className="SessionBox__Details">
                        <Col lg={8} md={8} xs={8}><p>{session.day}</p></Col>
                        <Col lg={8} md={8} xs={8}><p>{session.from} - {session.to}</p></Col>
-                       <Col lg={8} md={8} xs={8}><p>{session.therapistInfo.name}</p></Col>
+                       <Col lg={8} md={8} xs={8}><p>{isTherapist ? session.user.name : session.therapistInfo.name}</p></Col>
                    </Row>
                 
                 </Col>
