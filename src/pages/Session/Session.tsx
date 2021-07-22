@@ -1,8 +1,8 @@
-import { Button, Col, Form, Input, Layout, Row} from "antd";
+import { Button, Col, Form, Input, Layout, Row, Spin} from "antd";
 import moment from "moment";
 import Peer from "peerjs";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import FullLayout from "../../components/Layout/FullLayout";
 import MessageBubble from "../../components/MessageBubble/MessageBubble";
 import './Session.css'
@@ -13,22 +13,28 @@ import avatar2 from '../../images/avatar2.png'
 import avatar3 from '../../images/avatar3.png'
 import avatar4 from '../../images/avatar4.png'
 import axios from "axios";
+import { io } from "socket.io-client";
 
+
+const serverUrl: string = process.env.REACT_APP_API_URL || 'http://localhost:8000'
+const urlArray = serverUrl?.split(':')
+const host = urlArray?.[1] || '';
+const socketIOClient = io(host+':'+urlArray?.[2]);
 
 const Session = () => {
-    const history = useHistory();
     const { Header } = Layout
     const { id: sessionId }: {id:any } = useParams()
-    const urlArray = process.env.REACT_APP_API_URL?.split(':')
-    const host = urlArray?.[1] || '';
+   
+    const CHAT_ROOM = `session-${sessionId}-chat`
     const divRef: any = useRef()
     const messagesEndRef: any = useRef()
     const [form] = Form.useForm()
     const [avatars] = useState([avatar1, avatar2, avatar3, avatar4])
 
     const [messages, setMessages]: [messages: Array<any>, setMessages: Function] = useState([])
-    const [cPeer, setCPeer]: [any, Function] = useState(null)
     const [message, setMessage]: [any, Function] = useState('')
+    const [loading, setLoading]: [any, Function] = useState(true)
+    const [peer, setPeer]: [any, Function] = useState(null)
     const [userSessions, setUserSessions]: [Array<any>, Function] = useState([])
     const [userSettings, setUserSettings]: [any , Function] = useState({ailments: [], media: [], hasHadTherapy: false, religiousTherapy: ''})
 
@@ -36,7 +42,8 @@ const Session = () => {
     const serverPort = parseInt(process.env.REACT_APP_SERVER_PORT || '') || 8000
     const userId = sessionStorage.getItem('userId') || ''
 
-    const [hostConnected, setHostConnected] = useState(false)
+    const [connectedUsers, setConnectedUsers]: [Array<any>, Function] = useState([])
+    const [connectTo, setConnectTo]: [Array<any>, Function] = useState([])
 
     const getSessionDetails = useCallback( async () => {
         try {
@@ -70,76 +77,88 @@ const Session = () => {
         }
     }, [sessionId, userId])
 
-    const setUpHostConnection = useCallback( () => {
-        const clientConnections: Array<any> = []
-        const hostPeer = new Peer(`session-${sessionId}-chat`, {
-            debug: 3,
-            host,
-            port: serverPort,
-            path: '/chat'
-        });
 
-        hostPeer.on('open', () => {
-            setHostConnected(true)
-            hostPeer.on('connection', function(conn) {
-                if (clientConnections.indexOf(conn.peer) === -1) {
-                    clientConnections.push(conn);
-                }
-                conn.on('data', (data:any) => { 
-                    clientConnections.forEach((clientConn:any) => {
-                        clientConn.send(data);
-    
-                    })
-                })
-            });
-        
+    const updateConnectedUsers = (conn:any) => {
+        setConnectedUsers((users:any) => {
+            return [...users, conn]
         })
- 
-    }, [host, serverPort, sessionId])
+    }
 
-    const setUpClientConnection = useCallback(() => {
-        const peer = new Peer(`${userId}${moment().format('x')}`, {
-            debug: 3,
-            host,
-            port: serverPort,
-            path: '/chat'
-        });
-    
-        peer.on('open', (id) => {
-            const conn = peer.connect(`session-${sessionId}-chat`);
-            conn.on('open', () => {
-                setCPeer(conn)
-
-                conn.on('data', (data:any) => {
-                    setMessages((messages:Array<any>) => {
-                    messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
-                    return [...messages, data]
-                   })
-                })
-            });
-            
-        });
-    }, [sessionId, userId, host, serverPort])
-
-    useEffect(() => {
-        setUpHostConnection()
-    }, [setUpHostConnection])
-
-    useEffect(() => {
-        setUpClientConnection()
-    }, [setUpClientConnection, setUpHostConnection, hostConnected])
-
+    const updateMessages= (message:any) => {
+        setMessages((theMessages:any) => {
+            return [...theMessages, message]
+        })
+    }
 
     useEffect(() => {
         getSessionDetails()
-    } , [getSessionDetails])
+    }, [])
 
+    useEffect(() => {
+        const peer = new Peer(`${userId}${moment().format('x')}`, {
+            debug: 1,
+            host,
+            port: serverPort,
+            path: '/chat'
+        });
+
+        peer.on('open', (id) => {
+            setPeer(peer)
+            socketIOClient.emit('join-room', CHAT_ROOM, id, userSettings.name)
+        })
+
+        peer.on('connection', (conn: any) => {    
+            setLoading(false)
+            updateConnectedUsers(conn)
+            conn.on('data', (data:any) => {
+                updateMessages(data)
+                messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+            });
+
+        })  
+
+    }, [])
+
+    useEffect(() => {
+        socketIOClient.on("user-connected", (user:any, roomId: any, username: string) => {
+            updateMessages({message:`${username} joined!`, key: moment().format('x'), type: 'notification-joined'})
+            setConnectTo((connectTo:any) => [...connectTo, user])
+        });
+    }, [])
+
+    useEffect(() => {
+        if (!peer) {
+            return
+        }
+
+        const newConnectTo = connectTo
+        newConnectTo.forEach((id:any, index:number) => {
+            const conn = peer.connect(id, {metadata: { name: userSettings.name, id: userId}});
+            conn.on('open', () => {
+                setLoading(false)
+                setConnectedUsers((connectedUsers:any) => [...connectedUsers, conn])
+            });
+
+            conn.on('data', (data:any) => {
+                updateMessages(data)
+                messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+            })
+
+            delete newConnectTo[index]
+        })
+
+        setConnectTo(newConnectTo)
+    }, [connectTo, peer])
 
     const sendMessage = () => {
-        if (message && cPeer) {
-            cPeer.send({message, userId, key: moment().format('x') + userId})
+        if (message && connectedUsers) {
+            const theMessage = {message, userId, key: moment().format('x') + userId}
+            connectedUsers.forEach((user:any) => {
+               user.send(theMessage)
+            })
+            updateMessages(theMessage)
         }
-        messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
         form.setFieldsValue({message: ''})
     }
 
@@ -168,6 +187,7 @@ const Session = () => {
     }
 
     return (
+        <Spin spinning={loading} tip={`Waiting for ${userSettings.name} to join the session`}>
         <FullLayout>
             <Row className="Session">
                 <Col span={6} className="Session__Col--UserData">
@@ -196,8 +216,8 @@ const Session = () => {
                         <p>Time Remaining: 30 Minutes </p>
                     </Header>
                     <div ref={divRef} className="Session__Col__MessageList">
-                        { messages.map((message:any) => {
-                            return <MessageBubble type={message.userId !== userId ? 'other': 'same'} message={message.message} key={message.key}/>
+                        { messages.map((theMessage:any) => {
+                            return <MessageBubble type={theMessage.userId !== userId ? 'other': 'same'} message={theMessage.message} key={theMessage.key} messageType={theMessage.type}/>
                         })}
                         <div ref={messagesEndRef} style={{marginBottom:'80px'}}></div>
                     </div>
@@ -206,7 +226,7 @@ const Session = () => {
                         <Input size="large" value={message} onChange={(e) => {
                                 setMessage(e.target.value)
                             }
-                            }/>
+                            } disabled={connectedUsers.length < 1}/>
                         </Form.Item>
 
                         <Form.Item>
@@ -217,6 +237,7 @@ const Session = () => {
             </Row>
             
         </FullLayout>
+        </Spin>
     );
 }
 

@@ -19,3 +19,20 @@
     color: teal;
     align-self: flex-end;
 }   
+
+.MessageBubble.notification-joined {
+    background: transparent;
+    color: green;
+    align-self: center;
+} 
+
+.MessageBubble.notification-left {
+    background: transparent;
+    color: red;
+    align-self: center;
+} 
+
+
+.MessageBubble.notification-joined p, .MessageBubble.notification-left p{
+    font-size: 12px;
+}
