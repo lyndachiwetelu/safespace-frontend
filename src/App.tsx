@@ -1,13 +1,13 @@
 import './App.css';
 import Home from './pages/Home/Home';
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Switch,
   Route,
   Link,
   useLocation
 } from "react-router-dom";
-import { Menu, Button, Layout} from 'antd';
+import { Menu, Button, Layout } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import Faq from './pages/Faq/Faq';
 import Login from './pages/Login/Login';
@@ -27,6 +27,8 @@ import TherapistLogin from './pages/TherapistLogin/TherapistLogin';
 import TherapistSessions from './pages/TherapistSessions/TherapistSessions';
 import TherapistAvailability from './pages/TherapistAvailability/TherapistAvailability';
 import Session from './pages/Session/Session';
+import ProtectedRoute from './hoc/ProtectedRoute/ProtectedRoute';
+import axios from 'axios';
 
 const { Header } = Layout
 const { SubMenu } = Menu
@@ -36,6 +38,22 @@ const App = () => {
   const location = useLocation()
   const [current, setCurrent] = useState('');
   const [therapist, setTherapist] = useState(sessionStorage.getItem('isTherapist'));
+  const [loggedIn, setLoggedIn]: [loggedIn:boolean, setLoggedIn:Function] = useState(false)
+
+  const checkIfUserIsLoggedIn =  useCallback(async () => {
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/users/isLoggedIn`, {withCredentials:true})
+        if (response.status === 200) {
+            setLoggedIn(true)
+        } 
+    } catch (err) {
+        setLoggedIn(false)
+    }
+},[])
+
+useEffect(() => {
+    checkIfUserIsLoggedIn()
+}, [])
 
   useEffect(() => {
     setCurrent(location.pathname.slice(1))
@@ -112,23 +130,21 @@ const App = () => {
             <Route path="/signup">
               <Signup />
             </Route>
-            <Route path="/therapists/:id/availability" children={<Availability />} />
+
+            <ProtectedRoute path="/therapists/:id/availability" component={Availability} loggedIn={loggedIn}/>
+            <ProtectedRoute path="/therapists/settings" component={TherapistSettings} loggedIn={loggedIn}/>
+            <ProtectedRoute path="/therapists/my/sessions" component={TherapistSessions} loggedIn={loggedIn}/>
+            <ProtectedRoute path="/therapists/availability" component={TherapistAvailability} loggedIn={loggedIn}/>
             <Route path="/therapists/signup" children={<TherapistSignup />} />
             <Route path="/therapists/login" children={<TherapistLogin />} />
             <Route path="/therapists/set-password" children={<TherapistSetPassword />} />
-            <Route path="/therapists/settings" children={<TherapistSettings />} />
-            <Route path="/therapists/my/sessions" children={<TherapistSessions />} />
-            <Route path="/therapists/availability" children={<TherapistAvailability />} />
-            <Route path="/therapists/:id" children={<SingleTherapist />} />
+            <ProtectedRoute path="/therapists/:id" component={SingleTherapist} loggedIn={loggedIn}/>
+            <ProtectedRoute path="/therapists" component={TherapistList} loggedIn={loggedIn}/>
+            <ProtectedRoute path="/booking/confirmed" component={BookingConfirmed} loggedIn={loggedIn}/>
+            <ProtectedRoute path="/booking/confirmation" component={BookingConfirmation} loggedIn={loggedIn}/>
+            <ProtectedRoute path="/sessions" component={Sessions} loggedIn={loggedIn}/>
+            <ProtectedRoute path="/session/:id" component={Session} loggedIn={loggedIn}/>
 
-            
-            <Route path="/therapists">
-              <TherapistList />
-            </Route>
-            <Route path="/booking/confirmed" children={<BookingConfirmed />} />
-            <Route path="/booking/confirmation" children={<BookingConfirmation />} />
-            <Route path="/sessions" children={<Sessions />} />
-            <Route path="/session/:id" children={<Session />} />
             <Route path="/get-started">
               <Questionnaire />
             </Route>

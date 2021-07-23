@@ -2,7 +2,7 @@ import { Button, Col, Form, Input, Layout, Row, Spin} from "antd";
 import moment from "moment";
 import Peer from "peerjs";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import FullLayout from "../../components/Layout/FullLayout";
 import MessageBubble from "../../components/MessageBubble/MessageBubble";
 import './Session.css'
@@ -24,7 +24,7 @@ const socketIOClient = io(host+':'+urlArray?.[2]);
 const Session = () => {
     const { Header } = Layout
     const { id: sessionId }: {id:any } = useParams()
-   
+    const history = useHistory()
     const CHAT_ROOM = `session-${sessionId}-chat`
     const divRef: any = useRef()
     const messagesEndRef: any = useRef()
@@ -41,9 +41,15 @@ const Session = () => {
 
     const serverPort = parseInt(process.env.REACT_APP_SERVER_PORT || '') || 8000
     const userId = sessionStorage.getItem('userId') || ''
+    const isTherapist = sessionStorage.getItem('isTherapist') || ''
 
     const [connectedUsers, setConnectedUsers]: [Array<any>, Function] = useState([])
     const [connectTo, setConnectTo]: [Array<any>, Function] = useState([])
+
+    let loginUrl: string = '/login'
+    if (isTherapist === 'true') {
+        loginUrl = '/therapists/login'
+    }
 
     const getSessionDetails = useCallback( async () => {
         try {
@@ -51,6 +57,10 @@ const Session = () => {
             if (response.status === 200) {
                 const theUserId = response.data.requestedBy
                 const therapistId = response.data.therapist
+
+                if ([theUserId, therapistId].indexOf(parseInt(userId)) === -1) {
+                    history.push('/home')
+                }
                 let sessionsUrl
                 let settingsUrl
                 
@@ -71,9 +81,9 @@ const Session = () => {
                     }
 
                 }
-            }
+            } 
         } catch (err) {
-            // TODO: handle error
+            history.push(loginUrl)
         }
     }, [sessionId, userId])
 
