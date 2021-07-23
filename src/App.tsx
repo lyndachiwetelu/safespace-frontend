@@ -39,7 +39,7 @@ const App = () => {
   const location = useLocation()
   const [current, setCurrent] = useState('');
   const [therapist, setTherapist] = useState(sessionStorage.getItem('isTherapist'));
-  const [loggedIn, setLoggedIn]: [loggedIn:boolean, setLoggedIn:Function] = useState(false)
+  const [loggedIn, setLoggedIn] = useState<null|boolean>(null)
   const [loading, setLoading]: [loading:boolean, setLoading:Function] = useState(true)
 
   const checkIfUserIsLoggedIn = useCallback(async () => {
@@ -51,9 +51,10 @@ const App = () => {
     } catch (err) {
         if (err.response.status === 401) {
           updateLoading(false)
+          return
         }
 
-        setLoggedIn(false)
+       setLoggedIn(false)
         
     }
 },[])

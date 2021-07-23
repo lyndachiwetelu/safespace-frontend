@@ -27,7 +27,7 @@ const ProtectedRoute = ({component:Component, path, ...rest} : {component:any, p
           render={(props) => {
             return isLoggedIn ? (<Component {...props} />) : (<Redirect to={loginUrl} />);
           }}
-        /> : <h1>Hello</h1> }
+        /> : <Component /> }
         </>
     );
 }
