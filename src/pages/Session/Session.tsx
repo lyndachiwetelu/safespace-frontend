@@ -2,7 +2,7 @@ import { Button, Col, Form, Input, Layout, Row, Spin} from "antd";
 import moment from "moment";
 import Peer from "peerjs";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { useHistory, useLocation, useParams } from "react-router-dom";
 import FullLayout from "../../components/Layout/FullLayout";
 import MessageBubble from "../../components/MessageBubble/MessageBubble";
 import './Session.css'
@@ -37,6 +37,7 @@ const Session = () => {
     const [peer, setPeer]: [any, Function] = useState(null)
     const [userSessions, setUserSessions]: [Array<any>, Function] = useState([])
     const [userSettings, setUserSettings]: [any , Function] = useState({ailments: [], media: [], hasHadTherapy: false, religiousTherapy: ''})
+    const { state } :  { state: any } = useLocation()
 
 
     const serverPort = parseInt(process.env.REACT_APP_SERVER_PORT || '') || 8000
@@ -131,7 +132,7 @@ const Session = () => {
 
     useEffect(() => {
         socketIOClient.on("user-connected", (user:any, roomId: any, username: string) => {
-            updateMessages({message:`${username} joined!`, key: moment().format('x'), type: 'notification-joined'})
+            updateMessages({message:`${state?.username ? state?.username : 'User'} joined!`, key: moment().format('x'), type: 'notification-joined'})
             setConnectTo((connectTo:any) => [...connectTo, user])
         });
     }, [])
@@ -226,8 +227,8 @@ const Session = () => {
                         <p>Time Remaining: 30 Minutes </p>
                     </Header>
                     <div ref={divRef} className="Session__Col__MessageList">
-                        { messages.map((theMessage:any) => {
-                            return <MessageBubble type={theMessage.userId !== userId ? 'other': 'same'} message={theMessage.message} key={theMessage.key} messageType={theMessage.type}/>
+                        { messages.map((theMessage:any, index:number) => {
+                            return <MessageBubble type={theMessage.userId !== userId ? 'other': 'same'} message={theMessage.message} key={theMessage.key + index} messageType={theMessage.type}/>
                         })}
                         <div ref={messagesEndRef} style={{marginBottom:'80px'}}></div>
                     </div>
