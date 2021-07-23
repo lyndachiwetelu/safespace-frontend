@@ -5,7 +5,8 @@ import {
   Switch,
   Route,
   Link,
-  useLocation
+  useLocation,
+  useHistory
 } from "react-router-dom";
 import { Menu, Button, Layout, Spin } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
@@ -35,7 +36,6 @@ const { Header } = Layout
 const { SubMenu } = Menu
 
 const App = () => {
-  
   const location = useLocation()
   const [current, setCurrent] = useState('');
   const [therapist, setTherapist] = useState(sessionStorage.getItem('isTherapist'));
@@ -43,18 +43,18 @@ const App = () => {
   const [loading, setLoading]: [loading:boolean, setLoading:Function] = useState(true)
 
   const checkIfUserIsLoggedIn = useCallback(async () => {
-    if (sessionStorage.getItem('userId') === null) {
-      setLoggedIn(false);
-      return 
-    }
-
     try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/users/isLoggedIn`, {withCredentials:true})
         if (response.status === 200) {
             setLoggedIn(true)
         } 
     } catch (err) {
+        if (err.response.status === 401) {
+          updateLoading(false)
+        }
+
         setLoggedIn(false)
+        
     }
 },[])
 
@@ -132,7 +132,7 @@ const updateLoading = (val:boolean) => {
             </SubMenu>): null}
             
           </Menu>
-          { (loading && loggedIn) ? <Spin spinning={loading}></Spin> :
+          { loading  ? <Spin spinning={loading}></Spin> :
           <Switch>
             <Route path="/faq">
               <Faq />
