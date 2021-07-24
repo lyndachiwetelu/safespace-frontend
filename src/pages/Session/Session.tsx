@@ -14,13 +14,11 @@ import avatar2 from '../../images/avatar2.png'
 import avatar3 from '../../images/avatar3.png'
 import avatar4 from '../../images/avatar4.png'
 import axios from "axios";
-import { io } from "socket.io-client";
-
+import socketIOClient from '../../socket/socket'
 
 const serverUrl: string = process.env.REACT_APP_API_URL || 'http://localhost:8000'
 const urlArray = serverUrl?.split(':')
 const host = urlArray?.[1] || '';
-const socketIOClient = io(host+':'+urlArray?.[2]);
 
 const Session = () => {
     const { Header } = Layout
@@ -28,6 +26,7 @@ const Session = () => {
     const history = useHistory()
     const CHAT_ROOM = `session-${sessionId}-chat`
     const divRef: any = useRef()
+    const inputRef: any = useRef()
     const messagesEndRef: any = useRef()
     const [form] = Form.useForm()
     const [avatars] = useState([avatar1, avatar2, avatar3, avatar4])
@@ -35,7 +34,7 @@ const Session = () => {
     const [messages, setMessages]: [messages: Array<any>, setMessages: Function] = useState([])
     const [message, setMessage]: [any, Function] = useState('')
     const [loading, setLoading]: [any, Function] = useState(true)
-    const [peer, setPeer]: [any, Function] = useState(null)
+    const [activePeer, setPeer]: [any, Function] = useState(null)
     const [userSessions, setUserSessions]: [Array<any>, Function] = useState([])
     const [userSettings, setUserSettings]: [any , Function] = useState({ailments: [], media: [], hasHadTherapy: false, religiousTherapy: ''})
     const { state } :  { state: any } = useLocation()
@@ -107,6 +106,9 @@ const Session = () => {
     }, [])
 
     useEffect(() => {
+        if (activePeer) {
+            return
+        }
         const peer = new Peer(`${userId}${moment().format('x')}`, {
             debug: 1,
             host,
@@ -139,13 +141,13 @@ const Session = () => {
     }, [])
 
     useEffect(() => {
-        if (!peer) {
+        if (!activePeer) {
             return
         }
 
         const newConnectTo = connectTo
         newConnectTo.forEach((id:any, index:number) => {
-            const conn = peer.connect(id, {metadata: { name: userSettings.name, id: userId}});
+            const conn = activePeer.connect(id, {metadata: { name: userSettings.name, id: userId}});
             conn.on('open', () => {
                 setLoading(false)
                 setConnectedUsers((connectedUsers:any) => [...connectedUsers, conn])
@@ -160,7 +162,7 @@ const Session = () => {
         })
 
         setConnectTo(newConnectTo)
-    }, [connectTo, peer])
+    }, [connectTo, activePeer])
 
     const sendMessage = () => {
         if (message && connectedUsers) {
@@ -209,6 +211,7 @@ const Session = () => {
                         <img src={telephoneImg} alt="telephone" />
                         <img src={chatImg} alt="chat" onClick={() => {
                             messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+                            inputRef.current?.focus()
                         }}/>
                         <img src={videoImg} alt="video" />
                     </div>
@@ -240,7 +243,7 @@ const Session = () => {
                         <Row>
                             <Col span={18}>
                             <Form.Item name='message' wrapperCol={{ sm: 24, lg:24 }} style={{ width: "100%"}}>
-                                <Input placeholder='Enter your Message' size="large" value={message} onChange={(e) => {
+                                <Input ref={inputRef} placeholder='Enter your Message' size="large" value={message} onChange={(e) => {
                                         setMessage(e.target.value)
                                     }
                                     } disabled={connectedUsers.length < 1}/>

@@ -1,5 +1,5 @@
 import { useContext, useEffect } from "react";
-import { Route, Redirect, useHistory } from "react-router-dom";
+import { Route, useHistory } from "react-router-dom";
 import { loggedInContext } from "../../context/loggedInContext";
 
 const ProtectedRoute = ({component:Component, path, ...rest} : {component:any, path:string}) => {
@@ -8,7 +8,6 @@ const ProtectedRoute = ({component:Component, path, ...rest} : {component:any, p
 
     useEffect(() => {
         if (sessionStorage.getItem('userId') === null) {
-            console.log('GOT HERE')
             history.push('/login')
         }
     }, [])
@@ -19,17 +18,20 @@ const ProtectedRoute = ({component:Component, path, ...rest} : {component:any, p
     if (isTherapist === 'true') {
         loginUrl = '/therapists/login'
     }
+
+    if (isLoggedIn === false) {
+        history.push(loginUrl)
+    }
    
     return (
-        <>
-        { isLoggedIn !== null ?  (<Route
+      <Route
           path={path}
           {...rest}
           render={(props) => {
-            return isLoggedIn ? (<Component {...props} />) : (<Redirect to={loginUrl} />);
-          }}/>) : <Route path={path} component={Component} {...rest} />  }
-          </>
+            return <Component {...props} />;
+          }}/>
     );
+
 }
 
 export default ProtectedRoute;

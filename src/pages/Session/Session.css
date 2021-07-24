@@ -36,7 +36,7 @@
 
 .Session .Session__Form {
     width: 100%;
-    top:94%;
+    top:93%;
     position:absolute;
     left:0px;
     right:0px; 
@@ -63,6 +63,7 @@
 .Session .Session__Col--UserData .Media {
     display: flex;
     justify-content: space-evenly;
+    cursor: pointer;
 }
 
 .Session .Session__Col--UserData .Media img{

@@ -45,16 +45,12 @@ const App = () => {
     try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/users/isLoggedIn`, {withCredentials:true})
         if (response.status === 200) {
-            setLoggedIn(true)
-        } 
-    } catch (err) {
-        if (err.response.status === 401) {
-          updateLoading(false)
-          return
+          setLoggedIn(true)
         }
 
-       setLoggedIn(false)
-        
+    } catch (err) {
+        updateLoading(false)
+        setLoggedIn(false)   
     }
 },[])
 
@@ -67,6 +63,8 @@ const updateLoading = (val:boolean) => {
 }
 
  useEffect(() => {
+  console.log('LOGIN CHANGED');
+  console.log(loggedIn, 'LOGGED IN IS ', loggedIn)
    if (loggedIn) {
       updateLoading(false)
    }
