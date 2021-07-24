@@ -5,8 +5,7 @@ import {
   Switch,
   Route,
   Link,
-  useLocation,
-  useHistory
+  useLocation
 } from "react-router-dom";
 import { Menu, Button, Layout, Spin } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
@@ -119,7 +118,6 @@ const updateLoading = (val:boolean) => {
               <Menu.Item key="therapists/signup" className='MenuItem'>
                   <Link to="/therapists/signup">Therapist Log in</Link>
               </Menu.Item>
-          
             </SubMenu>
 
             { therapist === 'true' ? (<SubMenu key="you" title="You" className="AppHeader__Menu__SubMenu" icon={<UserOutlined />}>

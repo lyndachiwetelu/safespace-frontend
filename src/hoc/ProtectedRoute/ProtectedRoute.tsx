@@ -8,6 +8,7 @@ const ProtectedRoute = ({component:Component, path, ...rest} : {component:any, p
 
     useEffect(() => {
         if (sessionStorage.getItem('userId') === null) {
+            console.log('GOT HERE')
             history.push('/login')
         }
     }, [])
@@ -21,16 +22,14 @@ const ProtectedRoute = ({component:Component, path, ...rest} : {component:any, p
    
     return (
         <>
-        { isLoggedIn !== null ? <Route
+        { isLoggedIn !== null ?  (<Route
           path={path}
           {...rest}
           render={(props) => {
             return isLoggedIn ? (<Component {...props} />) : (<Redirect to={loginUrl} />);
-          }}
-        /> : <Component /> }
-        </>
+          }}/>) : <Route path={path} component={Component} {...rest} />  }
+          </>
     );
 }
-
 
 export default ProtectedRoute;
