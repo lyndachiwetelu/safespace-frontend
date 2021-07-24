@@ -4,6 +4,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+    width: 100%;
 }
 
 .Session .Session__Col--Messages {
@@ -11,6 +12,7 @@
     background-color: #e9faf7;
     display: flex;
     flex-direction: column;
+    width: 100%;
 }
 
 .Session .Session__Col__Header p{
@@ -29,12 +31,16 @@
 .Session .Session__Form button.Session__Form__Button {
     background-color: #27a68f;
     color: white;
+    width: 100%;
 }
 
 .Session .Session__Form {
     width: 100%;
-    position: fixed;
-    top:80vh;
+    top:94%;
+    position:absolute;
+    left:0px;
+    right:0px; 
+    overflow:hidden;
 }
 .Session .Session__Col--UserData {
     text-align: center;

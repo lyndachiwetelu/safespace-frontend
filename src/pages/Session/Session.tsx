@@ -8,6 +8,7 @@ import MessageBubble from "../../components/MessageBubble/MessageBubble";
 import './Session.css'
 import telephoneImg from '../../images/telephone.png'
 import videoImg from '../../images/video.png'
+import chatImg from '../../images/chat.png'
 import avatar1 from '../../images/avatar1.png'
 import avatar2 from '../../images/avatar2.png'
 import avatar3 from '../../images/avatar3.png'
@@ -201,11 +202,14 @@ const Session = () => {
         <Spin spinning={loading} tip={`Waiting for ${userSettings.name} to join the session`}>
         <FullLayout>
             <Row className="Session">
-                <Col span={6} className="Session__Col--UserData">
+                <Col lg={6} sm={24} md={6} className="Session__Col--UserData">
                     <img src={userSettings.imageUrl || getRandomAvatar} alt="user" />
                     <h3>{userSettings.name} ({userSettings.age || `${userSettings.ageFrom} - ${userSettings.ageTo} yrs`})</h3>
                     <div className="Media">
                         <img src={telephoneImg} alt="telephone" />
+                        <img src={chatImg} alt="chat" onClick={() => {
+                            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+                        }}/>
                         <img src={videoImg} alt="video" />
                     </div>
                     <h4>{countSessions('upcoming')} Upcoming Sessions</h4>
@@ -220,7 +224,7 @@ const Session = () => {
                     
                    
                 </Col>
-                <Col span={18} className="Session__Col--Messages">
+                <Col lg={18} sm={24} md={18} className="Session__Col--Messages">
                     <Header className="Session__Col__Header">
                         <p>Status: Active Session</p>
                         <p>Time Used: 15 Minutes </p>
@@ -232,17 +236,22 @@ const Session = () => {
                         })}
                         <div ref={messagesEndRef} style={{marginBottom:'80px'}}></div>
                     </div>
-                    <Form form={form} layout="inline" className="Session__Form" >
-                        <Form.Item name='message' style={{ width: "60%" }}>
-                        <Input size="large" value={message} onChange={(e) => {
-                                setMessage(e.target.value)
-                            }
-                            } disabled={connectedUsers.length < 1}/>
+                    <Form form={form} layout="horizontal" className="Session__Form" >
+                        <Row>
+                            <Col span={18}>
+                            <Form.Item name='message' wrapperCol={{ sm: 24, lg:24 }} style={{ width: "100%"}}>
+                                <Input placeholder='Enter your Message' size="large" value={message} onChange={(e) => {
+                                        setMessage(e.target.value)
+                                    }
+                                    } disabled={connectedUsers.length < 1}/>
                         </Form.Item>
-
-                        <Form.Item>
-                            <Button size="large" className="Session__Form__Button" htmlType='submit' onClick={() => sendMessage()}>Send Message</Button>
-                        </Form.Item>
+                         </Col>
+                            <Col span={6}> 
+                                <Form.Item>
+                                    <Button size="large" className="Session__Form__Button" htmlType='submit' onClick={() => sendMessage()}>Send</Button>
+                                </Form.Item>
+                            </Col>
+                        </Row>
                     </Form>
                 </Col>
             </Row>
