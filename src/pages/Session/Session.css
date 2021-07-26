@@ -1,0 +1,82 @@
+.Session .Session__Col__Header {
+    background-color: #27a68f;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    width: 100%;
+}
+
+.Session .Session__Col--Messages {
+    height: 88vh;
+    background-color: #e9faf7;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.Session .Session__Col__Header p{
+    color: white;
+    line-height: normal;
+}
+
+.Session__Col__MessageList {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+    overflow:auto;
+    padding: 20px;
+}
+
+.Session .Session__Form button.Session__Form__Button {
+    background-color: #27a68f;
+    color: white;
+    width: 100%;
+}
+
+.Session .Session__Form {
+    width: 100%;
+    top:93%;
+    position:absolute;
+    left:0px;
+    right:0px; 
+    overflow:hidden;
+}
+.Session .Session__Col--UserData {
+    text-align: center;
+}
+
+.Session .Session__Col--UserData img {
+    border-radius: 50%;
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+}
+
+.Session .Session__Col--UserData h3 {
+    color: #0a7360;
+    text-transform: uppercase;
+    line-height: normal;
+    margin-top: 20px;
+}
+
+.Session .Session__Col--UserData .Media {
+    display: flex;
+    justify-content: space-evenly;
+    cursor: pointer;
+}
+
+.Session .Session__Col--UserData .Media img{
+    width: 50px;
+    height: 50px;
+}
+
+.Session .Session__Col--UserData h4{
+    margin-top: 15px;
+    line-height: 1.5em;
+}
+
+.Session .Session__Col--UserData  p {
+    line-height: normal;
+    padding: 5px 20px 0 20px;
+}

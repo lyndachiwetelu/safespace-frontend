@@ -1,13 +1,13 @@
 import './App.css';
 import Home from './pages/Home/Home';
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Switch,
   Route,
   Link,
-  useLocation
+  useLocation,
 } from "react-router-dom";
-import { Menu, Button, Layout} from 'antd';
+import { Menu, Button, Layout, Spin } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import Faq from './pages/Faq/Faq';
 import Login from './pages/Login/Login';
@@ -26,15 +26,52 @@ import TherapistSettings from './pages/TherapistSettings/TherapistSettings';
 import TherapistLogin from './pages/TherapistLogin/TherapistLogin';
 import TherapistSessions from './pages/TherapistSessions/TherapistSessions';
 import TherapistAvailability from './pages/TherapistAvailability/TherapistAvailability';
+import Session from './pages/Session/Session';
+import ProtectedRoute from './hoc/ProtectedRoute/ProtectedRoute';
+import axios from 'axios';
+import { loggedInContext } from './context/loggedInContext';
 
 const { Header } = Layout
 const { SubMenu } = Menu
 
 const App = () => {
-  
   const location = useLocation()
   const [current, setCurrent] = useState('');
   const [therapist, setTherapist] = useState(sessionStorage.getItem('isTherapist'));
+  const [loggedIn, setLoggedIn] = useState<null|boolean>(false)
+  const [loading, setLoading]: [loading:boolean, setLoading:Function] = useState(true)
+  const [loadingRequest, setLoadingRequest]: [loading:boolean| null, setLoading:Function] = useState(true)
+
+
+  const checkIfUserIsLoggedIn = useCallback(async () => {
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/users/isLoggedIn`, { withCredentials:true })
+        setLoadingRequest(false)
+        if (response.status === 200) {
+          setLoggedIn(true)
+        }
+
+    } catch (err) {
+        setLoadingRequest(false)
+        setLoggedIn(false)
+        updateLoading(false)
+    }
+}, [])
+
+
+useEffect(() => {
+    checkIfUserIsLoggedIn()
+}, [current, checkIfUserIsLoggedIn])
+
+const updateLoading = (val:boolean) => {
+    setLoading(val)
+}
+
+ useEffect(() => {
+   if (loggedIn) {
+      updateLoading(false)
+   }
+ }, [loggedIn])
 
   useEffect(() => {
     setCurrent(location.pathname.slice(1))
@@ -53,10 +90,7 @@ const App = () => {
     }
   }, [location]);
 
-  
-
   return (
-     <>
       <Header className="AppHeader">
         <div className="AppLogo"><Link to="/">SAFESPACE</Link></div>
        
@@ -84,7 +118,6 @@ const App = () => {
               <Menu.Item key="therapists/signup" className='MenuItem'>
                   <Link to="/therapists/signup">Therapist Log in</Link>
               </Menu.Item>
-          
             </SubMenu>
 
             { therapist === 'true' ? (<SubMenu key="you" title="You" className="AppHeader__Menu__SubMenu" icon={<UserOutlined />}>
@@ -98,6 +131,8 @@ const App = () => {
             </SubMenu>): null}
             
           </Menu>
+          { loading  ? <Spin spinning={loading}></Spin> :
+        <loggedInContext.Provider value={{loggedIn: loggedIn, loading: loadingRequest}}>
           <Switch>
             <Route path="/faq">
               <Faq />
@@ -105,28 +140,32 @@ const App = () => {
             <Route path="/how-it-works">
               <HowItWorks />
             </Route>
-            <Route path="/login">
-              <Login />
-            </Route>
+            
             <Route path="/signup">
               <Signup />
             </Route>
-            <Route path="/therapists/:id/availability" children={<Availability />} />
-            <Route path="/therapists/signup" children={<TherapistSignup />} />
+
+            <ProtectedRoute path="/therapists/:id/availability" component={Availability}  />
+            <ProtectedRoute path="/therapists/settings" component={TherapistSettings}  />
+            <ProtectedRoute path="/therapists/my/sessions" component={TherapistSessions}   />
+            <ProtectedRoute path="/therapists/availability" component={TherapistAvailability}  />
+            <Route path="/therapists/signup" children={<TherapistSignup />}/>
             <Route path="/therapists/login" children={<TherapistLogin />} />
             <Route path="/therapists/set-password" children={<TherapistSetPassword />} />
-            <Route path="/therapists/settings" children={<TherapistSettings />} />
-            <Route path="/therapists/my/sessions" children={<TherapistSessions />} />
-            <Route path="/therapists/availability" children={<TherapistAvailability />} />
-            <Route path="/therapists/:id" children={<SingleTherapist />} />
+            <ProtectedRoute path="/therapists/:id" component={SingleTherapist}   />
+            
+            <ProtectedRoute path="/booking/confirmed" component={BookingConfirmed}   />
+            <ProtectedRoute path="/booking/confirmation" component={BookingConfirmation}   />
 
             
-            <Route path="/therapists">
-              <TherapistList />
+            <ProtectedRoute path="/sessions" component={Sessions} />
+            <ProtectedRoute path="/therapists" component={TherapistList}   /> 
+            <ProtectedRoute path="/session/:id" component={Session}    />
+
+            <Route path="/login">
+              <Login />
             </Route>
-            <Route path="/booking/confirmed" children={<BookingConfirmed />} />
-            <Route path="/booking/confirmation" children={<BookingConfirmation />} />
-            <Route path="/sessions" children={<Sessions />} />
+
             <Route path="/get-started">
               <Questionnaire />
             </Route>
@@ -134,8 +173,8 @@ const App = () => {
               <Home />
             </Route>
           </Switch>
-          </Header>
-    </>)
+          </loggedInContext.Provider>
+} </Header> )
 }
 
 export default App

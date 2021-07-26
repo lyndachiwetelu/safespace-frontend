@@ -1,0 +1,5 @@
+.ant-spin.ant-spin-spinning {
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+}

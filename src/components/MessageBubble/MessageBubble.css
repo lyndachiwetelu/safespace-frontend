@@ -1,0 +1,38 @@
+.MessageBubble {
+    width: 40%;
+    height: auto;
+    background-color: #27a68f;
+    color: white;
+    margin-top: 20px;
+    border-radius: 20px;
+    padding: 10px;
+    line-height: 1.5em;
+}
+
+.MessageBubble p {
+    margin-bottom: 0;
+    font-size: 20px;
+}
+
+.MessageBubble.other{
+    background-color: #fff;
+    color: teal;
+    align-self: flex-end;
+}   
+
+.MessageBubble.notification-joined {
+    background: transparent;
+    color: green;
+    align-self: center;
+} 
+
+.MessageBubble.notification-left {
+    background: transparent;
+    color: red;
+    align-self: center;
+} 
+
+
+.MessageBubble.notification-joined p, .MessageBubble.notification-left p{
+    font-size: 12px;
+}

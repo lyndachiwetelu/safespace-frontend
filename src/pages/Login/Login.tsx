@@ -2,15 +2,23 @@ import { Col, Row } from "antd"
 import FullLayout from "../../components/Layout/FullLayout"
 import "./Login.css"
 import { Form, Input, Button, Layout } from 'antd';
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import axios from "axios";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { loggedInContext } from "../../context/loggedInContext";
 
 const Login = () => {
     const { Header } = Layout
 
     const history = useHistory()
+    const location = useLocation()
     const [loginError, setLoginError] = useState('')
+    const isLoggedIn = useContext<any>(loggedInContext)
+    const { state } : { state: any } = location;
+
+    if (isLoggedIn.loggedIn && state) {
+        history.replace(state.from || '/')
+    }
 
     const onFinish = async (values: any) => {
         const baseUrl = process.env.REACT_APP_API_URL
@@ -31,7 +39,7 @@ const Login = () => {
       };
     
     const onFinishFailed = (errorInfo: any) => {
-        // console.log(errorInfo)
+        // handle error
     };
 
     return (

@@ -27,12 +27,6 @@ const TherapistList = () => {
         userId = null
     }
     
-    if (state !== undefined) {
-        userId = state.userId
-    } else if (!state && !userId) {
-        history.push('/login')
-    }
-    
     const [therapists, setTherapists] = useState([])
     const [userSettings, setUserSettings] = useState(
         {
@@ -100,7 +94,7 @@ const TherapistList = () => {
                setUserSettings(response.data)
                fetchTherapists(userId)
             } else {
-                console.log('STATUS IS NOT 200')
+                // handle error
             }
         } catch (err) {
             // handle error

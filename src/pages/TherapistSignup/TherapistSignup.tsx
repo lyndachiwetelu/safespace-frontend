@@ -29,7 +29,7 @@ const TherapistSignup = () => {
       };
     
     const onFinishFailed = (errorInfo: any) => {
-        console.log('Failed:', errorInfo);
+        // handle error
     };
 
     return (
