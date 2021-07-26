@@ -13,7 +13,7 @@ const ProtectedRoute = ({component:Component, path, ...rest} : {component:any, p
         if (sessionStorage.getItem('userId') === null) {
             history.push('/login')
         }
-    }, [])
+    }, [history])
 
     let loginUrl: string = '/login'
     const isTherapist: string = sessionStorage.getItem('isTherapist') || ''
@@ -27,10 +27,10 @@ const ProtectedRoute = ({component:Component, path, ...rest} : {component:any, p
             path={path}
             {...rest}
             render={(props) => {
-             { return isLoggedIn.loggedIn ? <Component {...props} /> : <Redirect to={{
+             return isLoggedIn.loggedIn ? <Component {...props} /> : <Redirect to={{
                 pathname: loginUrl,
                 state: { from: path }
-              }} /> } 
+              }} />  
             }}/> : <Spin /> }
         </>
     

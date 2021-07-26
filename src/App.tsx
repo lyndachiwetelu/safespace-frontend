@@ -61,7 +61,7 @@ const App = () => {
 
 useEffect(() => {
     checkIfUserIsLoggedIn()
-}, [current])
+}, [current, checkIfUserIsLoggedIn])
 
 const updateLoading = (val:boolean) => {
     setLoading(val)

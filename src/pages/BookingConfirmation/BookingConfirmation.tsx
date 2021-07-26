@@ -23,6 +23,7 @@ const BookingConfirmation = () => {
 
     const handlePayment = async() => {
         // store payment method also - non mvp
+        console.log(paymentMethod)
         const savedSessions = []
         const url = `${process.env.REACT_APP_API_URL}/api/v1/sessions`
         for (const selection of sessionData.sessions) {

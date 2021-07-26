@@ -40,8 +40,6 @@ const Session = () => {
     const [userSettings, setUserSettings]: [any , Function] = useState({ailments: [], media: [], hasHadTherapy: false, religiousTherapy: ''})
     const { state } :  { state: any } = useLocation()
 
-
-    const serverPort = parseInt(process.env.REACT_APP_SERVER_PORT || '') || 8000
     const userId = sessionStorage.getItem('userId') || ''
     const isTherapist = sessionStorage.getItem('isTherapist') || ''
 
@@ -87,7 +85,7 @@ const Session = () => {
         } catch (err) {
             history.push(loginUrl)
         }
-    }, [sessionId, userId])
+    }, [sessionId, userId, history, loginUrl])
 
 
     const updateConnectedUsers = (conn:any) => {
@@ -104,7 +102,7 @@ const Session = () => {
 
     useEffect(() => {
         getSessionDetails()
-    }, [])
+    }, [getSessionDetails])
 
     useEffect(() => {
         if (activePeer) {
@@ -132,14 +130,14 @@ const Session = () => {
 
         })  
 
-    }, [])
+    }, [CHAT_ROOM, userId, userSettings.name, activePeer, socketIOClient])
 
     useEffect(() => {
         socketIOClient.on("user-connected", (user:any, roomId: any, username: string) => {
             updateMessages({message:`${state?.username ? state?.username : 'User'} joined!`, key: moment().format('x'), type: 'notification-joined'})
             setConnectTo((connectTo:any) => [...connectTo, user])
         });
-    }, [])
+    }, [socketIOClient, state?.username])
 
     useEffect(() => {
         if (!activePeer) {
@@ -163,7 +161,7 @@ const Session = () => {
         })
 
         setConnectTo(newConnectTo)
-    }, [connectTo, activePeer])
+    }, [connectTo, activePeer, userId, userSettings.name])
 
     const sendMessage = () => {
         if (message && connectedUsers) {
