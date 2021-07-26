@@ -6,12 +6,12 @@ import { useState } from 'react'
 
 const { Header }  = Layout
 
-const VideoPanel = ({videoStreamList, endCall} : {videoStreamList:any, endCall:Function}) => {
+const VideoPanel = ({videoStreamList, endCall, username} : {videoStreamList:any, endCall:Function, username: string}) => {
     const [callState, setCallState] = useState(true)
     return (
         <div className="VideoPanel">
             <Header className="VideoPanel__Header">
-            <h1>Video Call with {'User Name'}</h1>
+            <h3>Video Call with {username}</h3>
             <span>
                 <p>Status: Active Session</p>
                 <p>Time Used: 15 Minutes </p>

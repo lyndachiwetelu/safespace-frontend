@@ -14,7 +14,7 @@
     height: auto;
 }
 
-.VideoPanel__Header h1 {
+.VideoPanel__Header h3 {
     line-height: normal;
     color: white;
 }
@@ -42,4 +42,19 @@
 .VideoPanel .VideoPanel__EndCall img {
     max-height: 100%;
     max-width: 100%;
+}
+
+@media screen and (max-width: 800px) {
+    .VideoPanel .VideoPanel__VideoList  {
+        flex-direction: column;
+        justify-content: space-evenly;
+    }
+
+    .VideoPanel {
+        justify-content: flex-start;
+    }
+
+    .VideoPanel__Header span p {
+        font-size: 8px;
+    }
 }

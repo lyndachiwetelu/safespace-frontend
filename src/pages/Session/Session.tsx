@@ -1,7 +1,8 @@
-import { Button, Col, Form, Input, Layout, Row, Spin} from "antd";
+import { Button, Col, Form, Input, Layout, Row, Spin, Modal} from "antd";
 import moment from "moment";
 import Peer from "peerjs";
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { PhoneOutlined } from '@ant-design/icons';
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import FullLayout from "../../components/Layout/FullLayout";
 import MessageBubble from "../../components/MessageBubble/MessageBubble";
@@ -48,6 +49,8 @@ const Session = () => {
     const [connectTo, setConnectTo]: [Array<any>, Function] = useState([])
     const [activeCall, setActiveCall]: [boolean, Function] = useState(false)
     const [videoStreamList, setVideoStreamList]: [Array<any>, Function] = useState([])
+
+    const { confirm } = Modal;
 
     let loginUrl: string = '/login'
     if (isTherapist === 'true') {
@@ -146,12 +149,43 @@ const Session = () => {
         getSessionDetails()
     }, [getSessionDetails])
 
+    const receiveCall = useCallback(async (getUserMedia:any, call:any) => {
+        console.log('Receiving Call')
+        getUserMedia({video: true, audio: true}, (stream:any) => {
+            call.answer(stream); 
+            call.on('stream', function(remoteStream:any) {
+                setActiveCall(true)  
+                setVideoStreamList([{stream, type:'callee'}, {stream:remoteStream, type:'caller'}])
+                console.log('remoteStream from caller is on');
+            });
+        }, (err:any) => {
+            console.log('Failed to get local stream' ,err);
+        });
+    }, [])
+
+
+    const showConfirm = (getUserMedia:any, call:any) => {
+        confirm({
+          title: `${state?.username} is calling you, do you want to pick the call?`,
+          icon: <PhoneOutlined />,
+          content: 'Click to pick call or cancel',
+          cancelText: 'Reject Call',
+          okText:'Accept Call',
+          onOk() {
+            receiveCall(getUserMedia, call)
+          },
+          onCancel() {
+            // do nothing
+          },
+        });
+      }
+
     useEffect(() => {
         if (activePeer) {
             return
         }
         const peer = new Peer(`${userId}${moment().format('x')}`, {
-            debug: 3,
+            debug: 1,
             port: parseInt(process.env.REACT_APP_PEER_PORT || '') || 8000,
             host,
             path: '/chat'
@@ -173,23 +207,12 @@ const Session = () => {
         })  
 
         peer.on('disconnected', () => {
-            socketIOClient.emit('user-disconnected', { room: CHAT_ROOM, id: activePeer.id })
+            socketIOClient.emit('user-disconnected', { room: CHAT_ROOM, id: activePeer.id ? activePeer.id : 'Unknown ID' })
         })
-
 
         const getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
         peer.on('call', function(call:any) {
-        console.log('Receiving Call')
-        getUserMedia({video: true, audio: true}, (stream) => {
-            call.answer(stream); 
-            call.on('stream', function(remoteStream:any) {
-                setActiveCall(true)  
-                setVideoStreamList([{stream, type:'callee'}, {stream:remoteStream, type:'caller'}])
-                console.log('remoteStream from caller is on');
-            });
-        }, (err) => {
-            console.log('Failed to get local stream' ,err);
-        });
+         showConfirm(getUserMedia, call)
         });
 
     }, [CHAT_ROOM, userId, userSettings.name, activePeer, socketIOClient])
@@ -276,7 +299,7 @@ const Session = () => {
         <Spin spinning={loading} tip={`Waiting for ${userSettings.name} to join the session`}>
         <FullLayout>
         { activeCall && activePeer ? <> 
-            <VideoPanel videoStreamList={videoStreamList} endCall={endCall} />
+            <VideoPanel videoStreamList={videoStreamList} username={state?.username} endCall={endCall} />
         
         </> :
             <Row className="Session">

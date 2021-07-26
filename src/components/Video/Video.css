@@ -2,3 +2,11 @@
     width: 45vw;
     height: 60vh;
 }
+
+@media (max-width: 800px) {
+    .VideoPlayer {
+        width: 80%;
+        height: 50%;
+    }
+    
+}
