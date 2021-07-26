@@ -24,7 +24,7 @@ const VideoPanel = ({videoStreamList, endCall, username} : {videoStreamList:any,
                     return (
                         <div className="VideoPanel-item" key={index}>
                             <Video srcObject={videoStream.stream} callState={callState} />
-                            <h2>{videoStream.type === 'caller' ? 'You': 'Other user'}</h2>
+                            <h2>{videoStream.type === 'activeUser' ? 'You' : username}</h2>
                         </div>
                     )
                 })

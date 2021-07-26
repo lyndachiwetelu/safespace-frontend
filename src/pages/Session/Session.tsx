@@ -79,7 +79,7 @@ const Session = () => {
             call.on('stream', function(remoteStream:any) {
                 setActiveCall(true)
                 //remote stream is callee video
-                setVideoStreamList([{stream, type:'caller'}, {stream:remoteStream, type:'callee'}])
+                setVideoStreamList([{stream:remoteStream, type:'other'}, {stream, type:'activeUser'}])
                 console.log('remote stream from callee is on', user.peer)
             });
         }, (err) => {
@@ -155,8 +155,8 @@ const Session = () => {
             call.answer(stream); 
             call.on('stream', function(remoteStream:any) {
                 setActiveCall(true)  
-                setVideoStreamList([{stream, type:'callee'}, {stream:remoteStream, type:'caller'}])
-                console.log('remoteStream from caller is on');
+                setVideoStreamList([{stream:remoteStream, type:'other'}, {stream, type:'activeUser'}])
+                console.log('remote stream from caller is on');
             });
         }, (err:any) => {
             console.log('Failed to get local stream' ,err);
