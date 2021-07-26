@@ -27,12 +27,6 @@ const TherapistList = () => {
         userId = null
     }
     
-    // if (state !== undefined) {
-    //     userId = state.userId
-    // } else if (!state && !userId) {
-    //     history.push('/login')
-    // }
-    
     const [therapists, setTherapists] = useState([])
     const [userSettings, setUserSettings] = useState(
         {
