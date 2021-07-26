@@ -90,7 +90,7 @@ const TherapistSettings = () => {
             setImageUrl(response.data.url)
         }).catch(err => {
             //err.response.data
-            console.log('ERROR WITH FILE UPLOAD')
+            // handle error
         })
     }
     

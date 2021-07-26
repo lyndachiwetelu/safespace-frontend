@@ -43,7 +43,7 @@ const Signup = () => {
                 sessionStorage.setItem('isTherapist', 'false')
                 history.push({pathname: '/therapists', state:{ userId: response.data.id, settings: response.data.settings }})
             } else {
-                console.log('STATUS IS NOT 201')
+                setSignupError('Error occurred while signing up!')
             }
         } catch (err) {
             setSignupError('Error occurred while signing up!')
@@ -52,7 +52,7 @@ const Signup = () => {
       };
     
       const onFinishFailed = (errorInfo: any) => {
-        console.log('Failed:', errorInfo);
+        // handle error
       };
 
     return (

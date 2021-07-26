@@ -1,4 +1,4 @@
 import { createContext } from "react";
-const loggedInContext = createContext<boolean | null>(null);
+const loggedInContext = createContext<any>({});
 
 export { loggedInContext };

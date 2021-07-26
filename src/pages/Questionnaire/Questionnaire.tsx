@@ -27,7 +27,7 @@ const Questionnaire = () => {
     };
 
     const onFinishFailed = (errorInfo: any) => {
-        console.log('Failed:', errorInfo);
+        // handle error
     };
 
     return (<FullLayout>

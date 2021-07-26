@@ -5,7 +5,7 @@ import {
   Switch,
   Route,
   Link,
-  useLocation
+  useLocation,
 } from "react-router-dom";
 import { Menu, Button, Layout, Spin } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
@@ -38,33 +38,36 @@ const App = () => {
   const location = useLocation()
   const [current, setCurrent] = useState('');
   const [therapist, setTherapist] = useState(sessionStorage.getItem('isTherapist'));
-  const [loggedIn, setLoggedIn] = useState<null|boolean>(null)
+  const [loggedIn, setLoggedIn] = useState<null|boolean>(false)
   const [loading, setLoading]: [loading:boolean, setLoading:Function] = useState(true)
+  const [loadingRequest, setLoadingRequest]: [loading:boolean| null, setLoading:Function] = useState(true)
+
 
   const checkIfUserIsLoggedIn = useCallback(async () => {
     try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/users/isLoggedIn`, {withCredentials:true})
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/users/isLoggedIn`, { withCredentials:true })
+        setLoadingRequest(false)
         if (response.status === 200) {
           setLoggedIn(true)
         }
 
     } catch (err) {
+        setLoadingRequest(false)
+        setLoggedIn(false)
         updateLoading(false)
-        setLoggedIn(false)   
     }
-},[])
+}, [])
+
 
 useEffect(() => {
     checkIfUserIsLoggedIn()
-}, [])
+}, [current])
 
 const updateLoading = (val:boolean) => {
     setLoading(val)
 }
 
  useEffect(() => {
-  console.log('LOGIN CHANGED');
-  console.log(loggedIn, 'LOGGED IN IS ', loggedIn)
    if (loggedIn) {
       updateLoading(false)
    }
@@ -88,7 +91,6 @@ const updateLoading = (val:boolean) => {
   }, [location]);
 
   return (
-    <loggedInContext.Provider value={loggedIn}>
       <Header className="AppHeader">
         <div className="AppLogo"><Link to="/">SAFESPACE</Link></div>
        
@@ -130,6 +132,7 @@ const updateLoading = (val:boolean) => {
             
           </Menu>
           { loading  ? <Spin spinning={loading}></Spin> :
+        <loggedInContext.Provider value={{loggedIn: loggedIn, loading: loadingRequest}}>
           <Switch>
             <Route path="/faq">
               <Faq />
@@ -137,26 +140,31 @@ const updateLoading = (val:boolean) => {
             <Route path="/how-it-works">
               <HowItWorks />
             </Route>
-            <Route path="/login">
-              <Login />
-            </Route>
+            
             <Route path="/signup">
               <Signup />
             </Route>
 
-            <ProtectedRoute path="/therapists/:id/availability" component={Availability} />
-            <ProtectedRoute path="/therapists/settings" component={TherapistSettings} />
-            <ProtectedRoute path="/therapists/my/sessions" component={TherapistSessions} />
-            <ProtectedRoute path="/therapists/availability" component={TherapistAvailability}/>
-            <Route path="/therapists/signup" children={<TherapistSignup />} />
+            <ProtectedRoute path="/therapists/:id/availability" component={Availability}  />
+            <ProtectedRoute path="/therapists/settings" component={TherapistSettings}  />
+            <ProtectedRoute path="/therapists/my/sessions" component={TherapistSessions}   />
+            <ProtectedRoute path="/therapists/availability" component={TherapistAvailability}  />
+            <Route path="/therapists/signup" children={<TherapistSignup />}/>
             <Route path="/therapists/login" children={<TherapistLogin />} />
             <Route path="/therapists/set-password" children={<TherapistSetPassword />} />
-            <ProtectedRoute path="/therapists/:id" component={SingleTherapist} />
-            <ProtectedRoute path="/therapists" component={TherapistList} />
-            <ProtectedRoute path="/booking/confirmed" component={BookingConfirmed} />
-            <ProtectedRoute path="/booking/confirmation" component={BookingConfirmation} />
+            <ProtectedRoute path="/therapists/:id" component={SingleTherapist}   />
+            
+            <ProtectedRoute path="/booking/confirmed" component={BookingConfirmed}   />
+            <ProtectedRoute path="/booking/confirmation" component={BookingConfirmation}   />
+
+            
             <ProtectedRoute path="/sessions" component={Sessions} />
-            <ProtectedRoute path="/session/:id" component={Session} />
+            <ProtectedRoute path="/therapists" component={TherapistList}   /> 
+            <ProtectedRoute path="/session/:id" component={Session}    />
+
+            <Route path="/login">
+              <Login />
+            </Route>
 
             <Route path="/get-started">
               <Questionnaire />
@@ -165,8 +173,8 @@ const updateLoading = (val:boolean) => {
               <Home />
             </Route>
           </Switch>
-} </Header>
-</loggedInContext.Provider> )
+          </loggedInContext.Provider>
+} </Header> )
 }
 
 export default App

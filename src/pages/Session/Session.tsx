@@ -1,7 +1,7 @@
 import { Button, Col, Form, Input, Layout, Row, Spin} from "antd";
 import moment from "moment";
 import Peer from "peerjs";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import FullLayout from "../../components/Layout/FullLayout";
 import MessageBubble from "../../components/MessageBubble/MessageBubble";
@@ -14,13 +14,14 @@ import avatar2 from '../../images/avatar2.png'
 import avatar3 from '../../images/avatar3.png'
 import avatar4 from '../../images/avatar4.png'
 import axios from "axios";
-import socketIOClient from '../../socket/socket'
+import socketContext from "../../context/socketContext";
 
 const serverUrl: string = process.env.REACT_APP_API_URL || 'http://localhost:8000'
 const urlArray = serverUrl?.split(':')
 const host = urlArray?.[1] || '';
 
 const Session = () => {
+    const socketIOClient = useContext(socketContext);
     const { Header } = Layout
     const { id: sessionId }: {id:any } = useParams()
     const history = useHistory()
@@ -110,9 +111,9 @@ const Session = () => {
             return
         }
         const peer = new Peer(`${userId}${moment().format('x')}`, {
-            debug: 1,
+            debug: 3,
+            port: parseInt(process.env.REACT_APP_PEER_PORT || '') || 8000,
             host,
-            port: serverPort,
             path: '/chat'
         });
 
