@@ -1941,6 +1941,11 @@
     "@types/webpack-sources" "*"
     source-map "^0.6.0"
 
+"@types/webrtc@^0.0.29":
+  version "0.0.29"
+  resolved "https://registry.yarnpkg.com/@types/webrtc/-/webrtc-0.0.29.tgz#b1b1858f21c4f8e4ee529c91e4b7b7633bf90898"
+  integrity sha512-xrSlKRdEmlSJVLiVsTuvCEqJ76OzSxMqd5ME1MNixmUFGnw9jzjuKXUcF0aEtHKrBF9eLDRjHZzb4JYG+OcHlQ==
+
 "@types/yargs-parser@*":
   version "20.2.0"
   resolved "https://registry.yarnpkg.com/@types/yargs-parser/-/yargs-parser-20.2.0.tgz#dd3e6699ba3237f0348cd085e4698780204842f9"

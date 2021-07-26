@@ -15,6 +15,7 @@ import avatar3 from '../../images/avatar3.png'
 import avatar4 from '../../images/avatar4.png'
 import axios from "axios";
 import socketContext from "../../context/socketContext";
+import VideoPanel from "../../components/VideoPanel/VideoPanel";
 
 const serverUrl: string = process.env.REACT_APP_API_URL || 'http://localhost:8000'
 const urlArray = serverUrl?.split(':')
@@ -35,7 +36,7 @@ const Session = () => {
     const [messages, setMessages]: [messages: Array<any>, setMessages: Function] = useState([])
     const [message, setMessage]: [any, Function] = useState('')
     const [loading, setLoading]: [any, Function] = useState(true)
-    const [activePeer, setPeer]: [any, Function] = useState(null)
+    const [activePeer, setActivePeer]: [any, Function] = useState(null)
     const [userSessions, setUserSessions]: [Array<any>, Function] = useState([])
     const [userSettings, setUserSettings]: [any , Function] = useState({ailments: [], media: [], hasHadTherapy: false, religiousTherapy: ''})
     const { state } :  { state: any } = useLocation()
@@ -45,12 +46,53 @@ const Session = () => {
 
     const [connectedUsers, setConnectedUsers]: [Array<any>, Function] = useState([])
     const [connectTo, setConnectTo]: [Array<any>, Function] = useState([])
+    const [activeCall, setActiveCall]: [boolean, Function] = useState(false)
+    const [videoStreamList, setVideoStreamList]: [Array<any>, Function] = useState([])
 
     let loginUrl: string = '/login'
     if (isTherapist === 'true') {
         loginUrl = '/therapists/login'
     }
 
+    const endCall = () => {
+        if (activeCall) {
+            socketIOClient.emit('call-ended', {
+                sessionId: sessionId,
+                userId: userId,
+                room: CHAT_ROOM
+            })
+            setActiveCall(false)
+        }
+    }
+
+    const callUser = useCallback((user:any) => {
+        const getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+        getUserMedia({video: true, audio: true}, (stream) => {
+            const call = activePeer.call(user.peer, stream);
+            if (!call) {
+                console.log('call failed')
+                return
+            }
+            call.on('stream', function(remoteStream:any) {
+                setActiveCall(true)
+                //remote stream is callee video
+                setVideoStreamList([{stream, type:'caller'}, {stream:remoteStream, type:'callee'}])
+                console.log('remote stream from callee is on', user.peer)
+            });
+        }, (err) => {
+        console.log('Failed to get local stream' , err);
+    });
+    }, [activePeer])
+
+    const callConnectedUsersOrAnswerCall = () => {
+        console.log('callConnectedUsersOrAnswerCall')
+        connectedUsers.forEach((user: any) => {
+            console.log('calling user', user.peer)
+            callUser(user)
+        })
+    }
+
+    
     const getSessionDetails = useCallback( async () => {
         try {
             const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/sessions/${sessionId}`, {withCredentials:true})
@@ -116,7 +158,7 @@ const Session = () => {
         });
 
         peer.on('open', (id) => {
-            setPeer(peer)
+            setActivePeer(peer)
             socketIOClient.emit('join-room', CHAT_ROOM, id, userSettings.name)
         })
 
@@ -130,6 +172,26 @@ const Session = () => {
 
         })  
 
+        peer.on('disconnected', () => {
+            socketIOClient.emit('user-disconnected', { room: CHAT_ROOM, id: activePeer.id })
+        })
+
+
+        const getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+        peer.on('call', function(call:any) {
+        console.log('Receiving Call')
+        getUserMedia({video: true, audio: true}, (stream) => {
+            call.answer(stream); 
+            call.on('stream', function(remoteStream:any) {
+                setActiveCall(true)  
+                setVideoStreamList([{stream, type:'callee'}, {stream:remoteStream, type:'caller'}])
+                console.log('remoteStream from caller is on');
+            });
+        }, (err) => {
+            console.log('Failed to get local stream' ,err);
+        });
+        });
+
     }, [CHAT_ROOM, userId, userSettings.name, activePeer, socketIOClient])
 
     useEffect(() => {
@@ -137,6 +199,17 @@ const Session = () => {
             updateMessages({message:`${state?.username ? state?.username : 'User'} joined!`, key: moment().format('x'), type: 'notification-joined'})
             setConnectTo((connectTo:any) => [...connectTo, user])
         });
+
+        socketIOClient.on("call-has-ended", () => {
+            setActiveCall(false)
+        });
+
+        socketIOClient.on('peer-disconnected', (peerId) => {
+            setConnectedUsers((users:any) => {
+                return users.filter((user:any) => user.id !== peerId)
+            })
+        })
+
     }, [socketIOClient, state?.username])
 
     useEffect(() => {
@@ -202,6 +275,10 @@ const Session = () => {
     return (
         <Spin spinning={loading} tip={`Waiting for ${userSettings.name} to join the session`}>
         <FullLayout>
+        { activeCall && activePeer ? <> 
+            <VideoPanel videoStreamList={videoStreamList} endCall={endCall} />
+        
+        </> :
             <Row className="Session">
                 <Col lg={6} sm={24} md={6} className="Session__Col--UserData">
                     <img src={userSettings.imageUrl || getRandomAvatar} alt="user" />
@@ -212,7 +289,10 @@ const Session = () => {
                             messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
                             inputRef.current?.focus()
                         }}/>
-                        <img src={videoImg} alt="video" />
+                        <img src={videoImg} alt="video" onClick={() => {
+                            console.log('video')
+                            callConnectedUsersOrAnswerCall()
+                        }} />
                     </div>
                     <h4>{countSessions('upcoming')} Upcoming Sessions</h4>
                     <h4 style={{color: 'green'}}>{countSessions('past')} Completed Sessions</h4>
@@ -256,7 +336,7 @@ const Session = () => {
                         </Row>
                     </Form>
                 </Col>
-            </Row>
+            </Row> }
             
         </FullLayout>
         </Spin>
