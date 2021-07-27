@@ -32,8 +32,8 @@ const VideoPanel = ({videoStreamList, endCall, username} : {videoStreamList:any,
             </div>
             <div className="VideoPanel__EndCall">
                 <img src={endCallImage} className="VideoPanel__EndCallImg" alt='endcall'  onClick={() => {
-                    endCall()
                     setCallState(false)
+                    endCall()
                 }}/>
             </div>
             

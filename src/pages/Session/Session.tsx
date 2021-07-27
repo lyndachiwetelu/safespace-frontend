@@ -77,6 +77,7 @@ const Session = () => {
                 return
             }
             call.on('stream', function(remoteStream:any) {
+                setLoading(false)
                 setActiveCall(true)
                 //remote stream is callee video
                 setVideoStreamList([{stream:remoteStream, type:'other'}, {stream, type:'activeUser'}])
@@ -89,6 +90,7 @@ const Session = () => {
 
     const callConnectedUsersOrAnswerCall = () => {
         console.log('callConnectedUsersOrAnswerCall')
+        setLoading(true)
         connectedUsers.forEach((user: any) => {
             console.log('calling user', user.peer)
             callUser(user)
@@ -164,7 +166,7 @@ const Session = () => {
     }, [])
 
 
-    const showConfirm = (getUserMedia:any, call:any) => {
+    const showConfirm = useCallback((getUserMedia:any, call:any) => {
         confirm({
           title: `${state?.username} is calling you, do you want to pick the call?`,
           icon: <PhoneOutlined />,
@@ -178,7 +180,7 @@ const Session = () => {
             // do nothing
           },
         });
-      }
+      }, [confirm, receiveCall, state?.username])
 
     useEffect(() => {
         if (activePeer) {
@@ -215,7 +217,7 @@ const Session = () => {
          showConfirm(getUserMedia, call)
         });
 
-    }, [CHAT_ROOM, userId, userSettings.name, activePeer, socketIOClient])
+    }, [CHAT_ROOM, userId, userSettings.name, activePeer, socketIOClient, showConfirm])
 
     useEffect(() => {
         socketIOClient.on("user-connected", (user:any, roomId: any, username: string) => {
