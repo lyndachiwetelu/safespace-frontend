@@ -1,0 +1,49 @@
+.VoicePanel__Header {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    background: #27a68f;
+    color: white;
+    height: auto;
+}
+
+.VoicePanel__Header h3 {
+    line-height: normal;
+    color: white;
+}
+
+.VoicePanel__Header span p {
+    line-height: normal;
+    font-size: 12px;
+}
+
+.VoicePanel .VoicePanel__Img {
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.VoicePanel .VoicePanel__Content {
+    background: rgb(83, 81, 81);
+    width: 100vw;
+    min-height: 60vh;
+    display: flex;
+    flex-direction: row;
+    padding-top: 50px;
+    text-align: center;
+}
+
+.VoicePanel .VoicePanel__Controls {
+    display: flex;
+    justify-content: space-around;
+    background: #27a68f;
+    height: auto;
+    width: 100%;
+    padding: 30px;
+}
+
+.VoicePanel .VoicePanel__Controls img {
+    width: 50px;
+    height: 50px;
+}

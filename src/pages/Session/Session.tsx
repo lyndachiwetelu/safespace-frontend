@@ -1,4 +1,4 @@
-import { Button, Col, Form, Input, Layout, Row, Spin, Modal} from "antd";
+import { Button, Col, Form, Input, Layout, Row, Spin, Modal, message as Antmessage} from "antd";
 import moment from "moment";
 import Peer from "peerjs";
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
@@ -17,6 +17,7 @@ import avatar4 from '../../images/avatar4.png'
 import axios from "axios";
 import socketContext from "../../context/socketContext";
 import VideoPanel from "../../components/VideoPanel/VideoPanel";
+import VoicePanel from "../../components/VoicePanel/VoicePanel";
 
 const serverUrl: string = process.env.REACT_APP_API_URL || 'http://localhost:8000'
 const urlArray = serverUrl?.split(':')
@@ -47,8 +48,11 @@ const Session = () => {
 
     const [connectedUsers, setConnectedUsers]: [Array<any>, Function] = useState([])
     const [connectTo, setConnectTo]: [Array<any>, Function] = useState([])
-    const [activeCall, setActiveCall]: [boolean, Function] = useState(false)
+    const [activeVideoCall, setActiveVideoCall]: [boolean, Function] = useState(false)
+    const [activeVoiceCall, setActiveVoiceCall]: [boolean, Function] = useState(false)
     const [videoStreamList, setVideoStreamList]: [Array<any>, Function] = useState([])
+    const [audioStreamList, setAudioStreamList]: [Array<any>, Function] = useState([])
+   
 
     const { confirm } = Modal;
 
@@ -57,43 +61,76 @@ const Session = () => {
         loginUrl = '/therapists/login'
     }
 
-    const endCall = () => {
-        if (activeCall) {
-            socketIOClient.emit('call-ended', {
+    const endVideoCall = () => {
+        if (activeVideoCall) {
+            socketIOClient.emit('user-left-video-call', {
                 sessionId: sessionId,
                 userId: userId,
                 room: CHAT_ROOM
             })
-            setActiveCall(false)
+            setActiveVideoCall(false)
         }
     }
 
-    const callUser = useCallback((user:any) => {
-        const getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-        getUserMedia({video: true, audio: true}, (stream) => {
-            const call = activePeer.call(user.peer, stream);
+    const leaveVoiceCall = () => {
+        if (activeVoiceCall) {
+            socketIOClient.emit('user-left-voice-call', {
+                sessionId: sessionId,
+                userId: userId,
+                room: CHAT_ROOM
+            })
+            setActiveVoiceCall(false)
+        }
+    } 
+
+    const callUser = async (user:any, audioOnly:boolean) => {
+        const mediaDevices: MediaDevices = navigator.mediaDevices
+        const getUserMedia = mediaDevices.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+        
+        try {
+            const stream = await getUserMedia({video: !audioOnly, audio: {
+                autoGainControl: false,
+            }})
+            const call = activePeer.call(user.peer, stream, {metadata: {audioOnly}});
             if (!call) {
-                console.log('call failed')
                 return
             }
             call.on('stream', function(remoteStream:any) {
                 setLoading(false)
-                setActiveCall(true)
-                //remote stream is callee video
-                setVideoStreamList([{stream:remoteStream, type:'other'}, {stream, type:'activeUser'}])
-                console.log('remote stream from callee is on', user.peer)
+                if (audioOnly) {
+                    setActiveVoiceCall(true)  
+                    setAudioStreamList([{stream:remoteStream}, {stream}])
+                } else {
+                     //remote stream is callee video
+                    setActiveVideoCall(true)
+                    setVideoStreamList([{stream:remoteStream, type:'other'}, {stream, type:'activeUser'}])
+                }
             });
-        }, (err) => {
-        console.log('Failed to get local stream' , err);
-    });
-    }, [activePeer])
+        } catch (err) {
+            console.log(err)
+            Antmessage.error('You are not able to make a call')
+        }
+    }
 
-    const callConnectedUsersOrAnswerCall = () => {
-        console.log('callConnectedUsersOrAnswerCall')
+    const filterUniqueConnectedUsersByIdPrefix = (connectedUsers: Array<any>) => {
+        const filteredConnectedUsers: any = []
+        const connectedUsersMap: any = {}
+        connectedUsers.forEach(user => {
+            const id: number = user.peer.substring(0, user.peer.indexOf('-'))
+            if (!connectedUsersMap[id]) {
+                connectedUsersMap[id] = true
+                filteredConnectedUsers.push(user)
+            }
+        })
+
+        return filteredConnectedUsers
+    }
+
+    const callConnectedUsersOrAnswerCall = (audioOnly:boolean = false) => {
         setLoading(true)
-        connectedUsers.forEach((user: any) => {
-            console.log('calling user', user.peer)
-            callUser(user)
+        const filteredConnectedUsers = filterUniqueConnectedUsersByIdPrefix(connectedUsers)
+        filteredConnectedUsers.forEach((user: any) => {
+            callUser(user, audioOnly)
         })
     }
 
@@ -152,17 +189,26 @@ const Session = () => {
     }, [getSessionDetails])
 
     const receiveCall = useCallback(async (getUserMedia:any, call:any) => {
-        console.log('Receiving Call')
-        getUserMedia({video: true, audio: true}, (stream:any) => {
+
+        try {
+            const stream = await getUserMedia({ video: !call.metadata.audioOnly, audio: {
+                autoGainControl: false,
+             }})
             call.answer(stream); 
             call.on('stream', function(remoteStream:any) {
-                setActiveCall(true)  
-                setVideoStreamList([{stream:remoteStream, type:'other'}, {stream, type:'activeUser'}])
-                console.log('remote stream from caller is on');
+                if (call.metadata.audioOnly) {
+                    setActiveVoiceCall(true)
+                    setAudioStreamList([{stream:remoteStream}, {stream}])
+                } else {
+                    setActiveVideoCall(true)  
+                    setVideoStreamList([{stream:remoteStream, type:'other'}, {stream, type:'activeUser'}])
+
+                }
             });
-        }, (err:any) => {
-            console.log('Failed to get local stream' ,err);
-        });
+
+        } catch (err) {
+            Antmessage.error('You are not able to make a call')
+        }
     }, [])
 
 
@@ -186,7 +232,7 @@ const Session = () => {
         if (activePeer) {
             return
         }
-        const peer = new Peer(`${userId}${moment().format('x')}`, {
+        const peer = new Peer(`${userId}-${moment().format('x')}`, {
             debug: 1,
             port: parseInt(process.env.REACT_APP_PEER_PORT || '') || 8000,
             host,
@@ -212,7 +258,7 @@ const Session = () => {
             socketIOClient.emit('user-disconnected', { room: CHAT_ROOM, id: activePeer.id ? activePeer.id : 'Unknown ID' })
         })
 
-        const getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+        const getUserMedia = navigator.mediaDevices.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
         peer.on('call', function(call:any) {
          showConfirm(getUserMedia, call)
         });
@@ -225,8 +271,17 @@ const Session = () => {
             setConnectTo((connectTo:any) => [...connectTo, user])
         });
 
-        socketIOClient.on("call-has-ended", () => {
-            setActiveCall(false)
+        socketIOClient.on("user-left-the-video-call", () => {
+            if (activeVideoCall) {
+                Antmessage.warning(state?.username + ' left the call!', 5)
+            }
+            
+        });
+
+        socketIOClient.on("user-left-the-voice-call", () => {
+            if (activeVoiceCall) {
+                Antmessage.warning(state?.username + ' left the call!', 5)
+            }
         });
 
         socketIOClient.on('peer-disconnected', (peerId) => {
@@ -235,7 +290,7 @@ const Session = () => {
             })
         })
 
-    }, [socketIOClient, state?.username])
+    }, [socketIOClient, state?.username, activeVoiceCall, activeVideoCall])
 
     useEffect(() => {
         if (!activePeer) {
@@ -300,8 +355,12 @@ const Session = () => {
     return (
         <Spin spinning={loading} tip={`Waiting for ${userSettings.name} to join the session`}>
         <FullLayout>
-        { activeCall && activePeer ? <> 
-            <VideoPanel videoStreamList={videoStreamList} username={state?.username} endCall={endCall} />
+        { activeVoiceCall && activePeer ? <> 
+            <VoicePanel audioStreamList={audioStreamList} username={state?.username} image={userSettings.imageUrl || getRandomAvatar} leaveCall={leaveVoiceCall} />
+            </> :
+
+         activeVideoCall && activePeer ? <> 
+            <VideoPanel videoStreamList={videoStreamList} username={state?.username} endCall={endVideoCall} />
         
         </> :
             <Row className="Session">
@@ -309,13 +368,14 @@ const Session = () => {
                     <img src={userSettings.imageUrl || getRandomAvatar} alt="user" />
                     <h3>{userSettings.name} ({userSettings.age || `${userSettings.ageFrom} - ${userSettings.ageTo} yrs`})</h3>
                     <div className="Media">
-                        <img src={telephoneImg} alt="telephone" />
+                        <img src={telephoneImg} alt="telephone" onClick={() => {
+                            callConnectedUsersOrAnswerCall(true)
+                        }} />
                         <img src={chatImg} alt="chat" onClick={() => {
                             messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
                             inputRef.current?.focus()
                         }}/>
                         <img src={videoImg} alt="video" onClick={() => {
-                            console.log('video')
                             callConnectedUsersOrAnswerCall()
                         }} />
                     </div>

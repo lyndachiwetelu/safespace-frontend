@@ -24,14 +24,18 @@
     font-size: 12px;
 }
 
-.VideoPanel .VideoPanel__VideoList {
-    display: flex;
-    justify-content: space-around;
-}
-
 .VideoPanel .VideoPanel__VideoList h2 {
     line-height: normal;
     color: white;
+}
+
+.VideoPanel .VideoPanel__VideoList .VideoPanel-item.activeUser {
+    float: right;
+    position:absolute;
+    top: 15vh;
+    width:150px;
+    height:150px;
+    z-index:3000;
 }
 
 .VideoPanel .VideoPanel__EndCall {

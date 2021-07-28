@@ -2,12 +2,18 @@ import Video from '../Video/Video'
 import { Layout } from 'antd'
 import './VideoPanel.css'
 import endCallImage from '../../images/end-call.jpg'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const { Header }  = Layout
 
 const VideoPanel = ({videoStreamList, endCall, username} : {videoStreamList:any, endCall:Function, username: string}) => {
     const [callState, setCallState] = useState(true)
+
+    useEffect(() => {
+        if (!callState) {
+            endCall()
+        }
+    }, [callState, endCall])
     return (
         <div className="VideoPanel">
             <Header className="VideoPanel__Header">
@@ -22,8 +28,8 @@ const VideoPanel = ({videoStreamList, endCall, username} : {videoStreamList:any,
             {
                 videoStreamList.map((videoStream:any, index:number) => {
                     return (
-                        <div className="VideoPanel-item" key={index}>
-                            <Video srcObject={videoStream.stream} callState={callState} />
+                        <div className={`VideoPanel-item ${videoStream.type}`} key={index}>
+                            <Video srcObject={videoStream.stream} callState={callState} type={videoStream.type}/>
                             <h2>{videoStream.type === 'activeUser' ? 'You' : username}</h2>
                         </div>
                     )
@@ -33,7 +39,6 @@ const VideoPanel = ({videoStreamList, endCall, username} : {videoStreamList:any,
             <div className="VideoPanel__EndCall">
                 <img src={endCallImage} className="VideoPanel__EndCallImg" alt='endcall'  onClick={() => {
                     setCallState(false)
-                    endCall()
                 }}/>
             </div>
             

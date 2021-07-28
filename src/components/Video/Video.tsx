@@ -3,10 +3,11 @@ import './Video.css'
 
 type PropsType = VideoHTMLAttributes<HTMLVideoElement> & {
   srcObject: MediaStream,
-  callState: boolean
+  callState: boolean,
+  type: 'string'
 }
 
-export default function Video({ srcObject, callState, ...props }: PropsType) {
+export default function Video({ srcObject, callState, type, ...props }: PropsType) {
   const refVideo: any = useRef<HTMLVideoElement>(null)
 
   useEffect(() => {
@@ -15,10 +16,20 @@ export default function Video({ srcObject, callState, ...props }: PropsType) {
   }, [srcObject])
 
   useEffect(() => {
-    if (!callState && refVideo) {
+    if ((!callState && refVideo)) {
+        const stream = refVideo.current.srcObject;
+        const tracks = stream.getTracks();
+
+        tracks.forEach((track:any) => {
+            track.stop();
+        });
         refVideo.current.srcObject = null
     }
   }, [callState])
 
-  return <video ref={refVideo} {...props} controls autoPlay playsInline className="VideoPlayer" />
+  const isMuted = (type:string) => {
+      return type === 'activeUser'
+  }
+
+  return <video ref={refVideo} {...props} autoPlay playsInline className="VideoPlayer" muted={isMuted(type)}/>
 }
