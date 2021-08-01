@@ -15,34 +15,40 @@ const VideoPanel = ({videoStreamList, endCall, username} : {videoStreamList:any,
         }
     }, [callState, endCall])
     return (
+        <>
+        <Header className="VideoPanel__Header">
+        <h3>Video Call with {username}</h3>
+        <span>
+            <p>Status: Active Session</p>
+            <p>Time Used: 15 Minutes </p>
+            <p>Time Remaining: 30 Minutes </p>
+        </span>
+        </Header>
         <div className="VideoPanel">
-            <Header className="VideoPanel__Header">
-            <h3>Video Call with {username}</h3>
-            <span>
-                <p>Status: Active Session</p>
-                <p>Time Used: 15 Minutes </p>
-                <p>Time Remaining: 30 Minutes </p>
-            </span>
-            </Header>
             <div className="VideoPanel__VideoList">
             {
-                videoStreamList.map((videoStream:any, index:number) => {
-                    return (
-                        <div className={`VideoPanel-item ${videoStream.type}`} key={index}>
-                            <Video srcObject={videoStream.stream} callState={callState} type={videoStream.type}/>
-                            <h2>{videoStream.type === 'activeUser' ? 'You' : username}</h2>
-                        </div>
-                    )
-                })
+                 <div className={`VideoPanel-item ${videoStreamList[0]?.type}`}>
+                 <Video srcObject={videoStreamList[0]?.stream} callState={callState} type={videoStreamList[0]?.type}/>
+                 <h2>{username}</h2>
+                </div>
             }
             </div>
-            <div className="VideoPanel__EndCall">
-                <img src={endCallImage} className="VideoPanel__EndCallImg" alt='endcall'  onClick={() => {
-                    setCallState(false)
-                }}/>
+            <div className="VideoPanel__ActiveUserPanel">
+               
+                <div className="VideoPanel__ActiveUser">
+                    <Video srcObject={videoStreamList[1]?.stream} callState={callState} type={videoStreamList[1]?.type}/>
+                    <h2>You</h2>
+                </div>
+                <div className="VideoPanel__EndCall">
+                    <img src={endCallImage} className="VideoPanel__EndCallImg" alt='endcall'  onClick={() => {
+                        setCallState(false)
+                    }}/>
+                </div>
+
             </div>
-            
-        </div>
+                
+            </div>
+            </>
        
     ) 
 }
