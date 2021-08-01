@@ -68,7 +68,7 @@
 
 .VideoPanel .VideoPanel__VideoList {
     width: 100%;
-    height: auto;
+    height: 100vh;
     display: flex;
     flex:  0 0 70%;
     text-align: center;
@@ -80,6 +80,7 @@
     }
 
     .VideoPanel .VideoPanel__VideoList {
+        height: 85vh;
         flex: 0 0 80%;
     }
 
@@ -88,7 +89,7 @@
     }
 
     .VideoPanel .VideoPanel__ActiveUserPanel {
-        justify-content: flex-start;
+        justify-content: center;
     }
  
 }
