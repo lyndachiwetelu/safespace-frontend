@@ -1,7 +1,8 @@
-import { Button, Col, Form, Input, Layout, Row, Spin} from "antd";
+import { Button, Col, Form, Input, Layout, Row, Spin, Modal, message as Antmessage} from "antd";
 import moment from "moment";
 import Peer from "peerjs";
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { PhoneOutlined } from '@ant-design/icons';
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import FullLayout from "../../components/Layout/FullLayout";
 import MessageBubble from "../../components/MessageBubble/MessageBubble";
@@ -15,6 +16,8 @@ import avatar3 from '../../images/avatar3.png'
 import avatar4 from '../../images/avatar4.png'
 import axios from "axios";
 import socketContext from "../../context/socketContext";
+import VideoPanel from "../../components/VideoPanel/VideoPanel";
+import VoicePanel from "../../components/VoicePanel/VoicePanel";
 
 const serverUrl: string = process.env.REACT_APP_API_URL || 'http://localhost:8000'
 const urlArray = serverUrl?.split(':')
@@ -35,7 +38,7 @@ const Session = () => {
     const [messages, setMessages]: [messages: Array<any>, setMessages: Function] = useState([])
     const [message, setMessage]: [any, Function] = useState('')
     const [loading, setLoading]: [any, Function] = useState(true)
-    const [activePeer, setPeer]: [any, Function] = useState(null)
+    const [activePeer, setActivePeer]: [any, Function] = useState(null)
     const [userSessions, setUserSessions]: [Array<any>, Function] = useState([])
     const [userSettings, setUserSettings]: [any , Function] = useState({ailments: [], media: [], hasHadTherapy: false, religiousTherapy: ''})
     const { state } :  { state: any } = useLocation()
@@ -45,12 +48,100 @@ const Session = () => {
 
     const [connectedUsers, setConnectedUsers]: [Array<any>, Function] = useState([])
     const [connectTo, setConnectTo]: [Array<any>, Function] = useState([])
+    const [activeVideoCall, setActiveVideoCall]: [boolean, Function] = useState(false)
+    const [activeVoiceCall, setActiveVoiceCall]: [boolean, Function] = useState(false)
+    const [videoStreamList, setVideoStreamList]: [Array<any>, Function] = useState([])
+    const [audioStreamList, setAudioStreamList]: [Array<any>, Function] = useState([])
+   
+
+    const { confirm } = Modal;
 
     let loginUrl: string = '/login'
     if (isTherapist === 'true') {
         loginUrl = '/therapists/login'
     }
 
+    const endVideoCall = () => {
+        if (activeVideoCall) {
+            socketIOClient.emit('user-left-video-call', {
+                sessionId: sessionId,
+                userId: userId,
+                room: CHAT_ROOM
+            })
+            setActiveVideoCall(false)
+        }
+    }
+
+    const leaveVoiceCall = () => {
+        if (activeVoiceCall) {
+            socketIOClient.emit('user-left-voice-call', {
+                sessionId: sessionId,
+                userId: userId,
+                room: CHAT_ROOM
+            })
+            setActiveVoiceCall(false)
+        }
+    } 
+
+    const callUser = async (user:any, audioOnly:boolean) => {
+        const mediaDevices: MediaDevices = navigator.mediaDevices
+        const getUserMedia:any = mediaDevices.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+        
+        try {
+            const stream = await getUserMedia({video: !audioOnly, audio: {
+                mandatory: {
+                    googEchoCancellation: false,
+                    googAutoGainControl: false,
+                    googNoiseSuppression: false,
+                    googHighpassFilter: false
+                },
+                optional: []
+            }})
+            
+            const call = activePeer.call(user.peer, stream, {metadata: {audioOnly}});
+            if (!call) {
+                return
+            }
+            call.on('stream', function(remoteStream:any) {
+                setLoading(false)
+                if (audioOnly) {
+                    setActiveVoiceCall(true)  
+                    setAudioStreamList([{stream:remoteStream}, {stream}])
+                } else {
+                     //remote stream is callee video
+                    setActiveVideoCall(true)
+                    setVideoStreamList([{stream:remoteStream, type:'other'}, {stream, type:'activeUser'}])
+                }
+            });
+        } catch (err) {
+            console.log(err)
+            Antmessage.error('You are not able to make a call')
+        }
+    }
+
+    const filterUniqueConnectedUsersByIdPrefix = (connectedUsers: Array<any>) => {
+        const filteredConnectedUsers: any = []
+        const connectedUsersMap: any = {}
+        connectedUsers.forEach(user => {
+            const id: number = user.peer.substring(0, user.peer.indexOf('-'))
+            if (!connectedUsersMap[id]) {
+                connectedUsersMap[id] = true
+                filteredConnectedUsers.push(user)
+            }
+        })
+
+        return filteredConnectedUsers
+    }
+
+    const callConnectedUsersOrAnswerCall = (audioOnly:boolean = false) => {
+        setLoading(true)
+        const filteredConnectedUsers = filterUniqueConnectedUsersByIdPrefix(connectedUsers)
+        filteredConnectedUsers.forEach((user: any) => {
+            callUser(user, audioOnly)
+        })
+    }
+
+    
     const getSessionDetails = useCallback( async () => {
         try {
             const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/sessions/${sessionId}`, {withCredentials:true})
@@ -104,19 +195,67 @@ const Session = () => {
         getSessionDetails()
     }, [getSessionDetails])
 
+    const receiveCall = useCallback(async (getUserMedia:any, call:any) => {
+
+        try {
+            const stream = await getUserMedia({ video: !call.metadata.audioOnly, audio: {
+                mandatory: {
+                    googEchoCancellation: false,
+                    googAutoGainControl: false,
+                    googNoiseSuppression: false,
+                    googHighpassFilter: false
+                },
+                optional: []
+            }
+        })
+            call.answer(stream); 
+            call.on('stream', function(remoteStream:any) {
+                if (call.metadata.audioOnly) {
+                    setActiveVoiceCall(true)
+                    setAudioStreamList([{stream:remoteStream}, {stream}])
+                } else {
+                    setActiveVideoCall(true)  
+                    setVideoStreamList([{stream:remoteStream, type:'other'}, {stream, type:'activeUser'}])
+
+                }
+            });
+
+        } catch (err) {
+            console.log(err)
+            Antmessage.error('You are not able to make a call')
+        }
+    }, [])
+
+
+    const showConfirm = useCallback((getUserMedia:any, call:any) => {
+        confirm({
+          title: `${state?.username} is calling you, do you want to pick the call?`,
+          icon: <PhoneOutlined />,
+          content: 'Click to pick call or cancel',
+          cancelText: 'Reject Call',
+          okText:'Accept Call',
+          onOk() {
+            receiveCall(getUserMedia, call)
+          },
+          onCancel() {
+            // do nothing
+          },
+        });
+      }, [confirm, receiveCall, state?.username])
+
     useEffect(() => {
         if (activePeer) {
             return
         }
-        const peer = new Peer(`${userId}${moment().format('x')}`, {
-            debug: 3,
+        const peer = new Peer(`${userId}-${moment().format('x')}`, {
+            debug: 1,
             port: parseInt(process.env.REACT_APP_PEER_PORT || '') || 8000,
             host,
             path: '/chat'
         });
 
         peer.on('open', (id) => {
-            setPeer(peer)
+            setActivePeer(peer)
             socketIOClient.emit('join-room', CHAT_ROOM, id, userSettings.name)
         })
 
@@ -130,14 +269,43 @@ const Session = () => {
 
         })  
 
-    }, [CHAT_ROOM, userId, userSettings.name, activePeer, socketIOClient])
+        peer.on('disconnected', () => {
+            socketIOClient.emit('user-disconnected', { room: CHAT_ROOM, id: activePeer.id ? activePeer.id : 'Unknown ID' })
+        })
+
+        const getUserMedia = navigator.mediaDevices.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+        peer.on('call', function(call:any) {
+         showConfirm(getUserMedia, call)
+        });
+
+    }, [CHAT_ROOM, userId, userSettings.name, activePeer, socketIOClient, showConfirm])
 
     useEffect(() => {
         socketIOClient.on("user-connected", (user:any, roomId: any, username: string) => {
             updateMessages({message:`${state?.username ? state?.username : 'User'} joined!`, key: moment().format('x'), type: 'notification-joined'})
             setConnectTo((connectTo:any) => [...connectTo, user])
         });
-    }, [socketIOClient, state?.username])
+
+        socketIOClient.on("user-left-the-video-call", () => {
+            if (activeVideoCall) {
+                Antmessage.warning(state?.username + ' left the call!', 5)
+            }
+            
+        });
+
+        socketIOClient.on("user-left-the-voice-call", () => {
+            if (activeVoiceCall) {
+                Antmessage.warning(state?.username + ' left the call!', 5)
+            }
+        });
+
+        socketIOClient.on('peer-disconnected', (peerId) => {
+            setConnectedUsers((users:any) => {
+                return users.filter((user:any) => user.id !== peerId)
+            })
+        })
+
+    }, [socketIOClient, state?.username, activeVoiceCall, activeVideoCall])
 
     useEffect(() => {
         if (!activePeer) {
@@ -202,17 +370,29 @@ const Session = () => {
     return (
         <Spin spinning={loading} tip={`Waiting for ${userSettings.name} to join the session`}>
         <FullLayout>
+        { activeVoiceCall && activePeer ? <> 
+            <VoicePanel audioStreamList={audioStreamList} username={state?.username} image={userSettings.imageUrl || getRandomAvatar} leaveCall={leaveVoiceCall} />
+            </> :
+
+         activeVideoCall && activePeer ? <> 
+            <VideoPanel videoStreamList={videoStreamList} username={state?.username} endCall={endVideoCall} />
+        
+        </> :
             <Row className="Session">
                 <Col lg={6} sm={24} md={6} className="Session__Col--UserData">
                     <img src={userSettings.imageUrl || getRandomAvatar} alt="user" />
                     <h3>{userSettings.name} ({userSettings.age || `${userSettings.ageFrom} - ${userSettings.ageTo} yrs`})</h3>
                     <div className="Media">
-                        <img src={telephoneImg} alt="telephone" />
+                        <img src={telephoneImg} alt="telephone" onClick={() => {
+                            callConnectedUsersOrAnswerCall(true)
+                        }} />
                         <img src={chatImg} alt="chat" onClick={() => {
                             messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
                             inputRef.current?.focus()
                         }}/>
-                        <img src={videoImg} alt="video" />
+                        <img src={videoImg} alt="video" onClick={() => {
+                            callConnectedUsersOrAnswerCall()
+                        }} />
                     </div>
                     <h4>{countSessions('upcoming')} Upcoming Sessions</h4>
                     <h4 style={{color: 'green'}}>{countSessions('past')} Completed Sessions</h4>
@@ -256,7 +436,7 @@ const Session = () => {
                         </Row>
                     </Form>
                 </Col>
-            </Row>
+            </Row> }
             
         </FullLayout>
         </Spin>

@@ -1,0 +1,10 @@
+.VideoPlayer {
+   object-fit: contain;
+    width: 100%;
+}
+
+.VideoPlayer.other {
+    height: 70%;
+    object-fit: cover;
+}
+
