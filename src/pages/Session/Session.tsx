@@ -88,7 +88,7 @@ const Session = () => {
         const getUserMedia:any = mediaDevices.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
         
         try {
-            const stream = await getUserMedia({video: !audioOnly ? { width: 938, height: 536 } : false, audio: {
+            const stream = await getUserMedia({video: !audioOnly, audio: {
                 mandatory: {
                     googEchoCancellation: false,
                     googAutoGainControl: false,
@@ -198,7 +198,7 @@ const Session = () => {
     const receiveCall = useCallback(async (getUserMedia:any, call:any) => {
 
         try {
-            const stream = await getUserMedia({ video: !call.metadata.audioOnly ? { width: 938, height: 536 } : false, audio: {
+            const stream = await getUserMedia({ video: !call.metadata.audioOnly, audio: {
                 mandatory: {
                     googEchoCancellation: false,
                     googAutoGainControl: false,
