@@ -18,7 +18,7 @@ export default function Video({ srcObject, callState, type, ...props }: PropsTyp
         console.log('muted')
         refVideo.current.muted = true
     }
-  }, [srcObject])
+  }, [srcObject, type])
 
   useEffect(() => {
     if ((!callState && refVideo)) {
