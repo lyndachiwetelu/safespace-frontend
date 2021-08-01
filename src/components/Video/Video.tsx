@@ -13,6 +13,11 @@ export default function Video({ srcObject, callState, type, ...props }: PropsTyp
   useEffect(() => {
     if (!refVideo.current) return
     refVideo.current.srcObject = srcObject
+
+    if (isMuted(type)) {
+        console.log('muted')
+        refVideo.current.muted = true
+    }
   }, [srcObject])
 
   useEffect(() => {
@@ -31,5 +36,5 @@ export default function Video({ srcObject, callState, type, ...props }: PropsTyp
       return type === 'activeUser'
   }
 
-  return <video ref={refVideo} {...props} autoPlay playsInline className="VideoPlayer" muted={isMuted(type)}/>
+  return <video ref={refVideo} {...props} autoPlay playsInline className={`VideoPlayer ${type}`} muted={isMuted(type)}/>
 }

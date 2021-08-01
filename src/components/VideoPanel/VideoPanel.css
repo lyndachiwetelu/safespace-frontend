@@ -30,14 +30,15 @@
 }
 
 .VideoPanel .VideoPanel__VideoList .VideoPanel-item.activeUser {
-    float: right;
     position:absolute;
-    top: 15vh;
+    right: 0;
+    top: 10vh;
     width:150px;
     height:150px;
     z-index:3000;
+    margin: 0;
+    object-fit: contain;
 }
-
 .VideoPanel .VideoPanel__EndCall {
     width: 60px;
     height: 60px;

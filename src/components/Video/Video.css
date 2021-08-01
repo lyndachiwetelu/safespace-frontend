@@ -1,14 +1,14 @@
-.VideoPlayer {
-    width: 100vw;
-    height: 100vh;
-    max-width: 100%;
-    max-height: 100%;
+.VideoPlayer{
+    object-fit: cover;
 }
 
 @media (max-width: 800px) {
     .VideoPlayer {
         width: 80%;
-        height: 50%;
+    }
+
+    .VideoPlayer.activeUser {
+        top: 8vh;
     }
     
 }

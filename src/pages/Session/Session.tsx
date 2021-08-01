@@ -85,12 +85,19 @@ const Session = () => {
 
     const callUser = async (user:any, audioOnly:boolean) => {
         const mediaDevices: MediaDevices = navigator.mediaDevices
-        const getUserMedia = mediaDevices.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+        const getUserMedia:any = mediaDevices.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
         
         try {
             const stream = await getUserMedia({video: !audioOnly, audio: {
-                autoGainControl: false,
+                mandatory: {
+                    googEchoCancellation: false,
+                    googAutoGainControl: false,
+                    googNoiseSuppression: false,
+                    googHighpassFilter: false
+                },
+                optional: []
             }})
+            
             const call = activePeer.call(user.peer, stream, {metadata: {audioOnly}});
             if (!call) {
                 return
@@ -192,8 +199,15 @@ const Session = () => {
 
         try {
             const stream = await getUserMedia({ video: !call.metadata.audioOnly, audio: {
-                autoGainControl: false,
-             }})
+                mandatory: {
+                    googEchoCancellation: false,
+                    googAutoGainControl: false,
+                    googNoiseSuppression: false,
+                    googHighpassFilter: false
+                },
+                optional: []
+            }
+        })
             call.answer(stream); 
             call.on('stream', function(remoteStream:any) {
                 if (call.metadata.audioOnly) {
@@ -207,6 +221,7 @@ const Session = () => {
             });
 
         } catch (err) {
+            console.log(err)
             Antmessage.error('You are not able to make a call')
         }
     }, [])
