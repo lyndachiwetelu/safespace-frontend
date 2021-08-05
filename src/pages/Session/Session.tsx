@@ -61,6 +61,14 @@ const Session = () => {
         loginUrl = '/therapists/login'
     }
 
+    const removeEmojis = (string: string) => {
+        const regex = /(?:[\u2700-\u27bf]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff]|[\u0023-\u0039]\ufe0f?\u20e3|\u3299|\u3297|\u303d|\u3030|\u24c2|\ud83c[\udd70-\udd71]|\ud83c[\udd7e-\udd7f]|\ud83c\udd8e|\ud83c[\udd91-\udd9a]|\ud83c[\udde6-\uddff]|[\ud83c[\ude01\uddff]|\ud83c[\ude01-\ude02]|\ud83c\ude1a|\ud83c\ude2f|[\ud83c[\ude32\ude02]|\ud83c\ude1a|\ud83c\ude2f|\ud83c[\ude32-\ude3a]|[\ud83c[\ude50\ude3a]|\ud83c[\ude50-\ude51]|\u203c|\u2049|[\u25aa-\u25ab]|\u25b6|\u25c0|[\u25fb-\u25fe]|\u00a9|\u00ae|\u2122|\u2139|\ud83c\udc04|[\u2600-\u26FF]|\u2b05|\u2b06|\u2b07|\u2b1b|\u2b1c|\u2b50|\u2b55|\u231a|\u231b|\u2328|\u23cf|[\u23e9-\u23f3]|[\u23f8-\u23fa]|\ud83c\udccf|\u2934|\u2935|[\u2190-\u21ff])/g; // eslint-disable-line
+      
+        return string.replace(regex, '');
+      };
+      
+    const isEmojisOnly = useCallback((string: string) => removeEmojis(string).trim().length === 0, []);
+
     const endVideoCall = () => {
         if (activeVideoCall) {
             socketIOClient.emit('user-left-video-call', {
@@ -114,7 +122,6 @@ const Session = () => {
                 }
             });
         } catch (err) {
-            console.log(err)
             Antmessage.error('You are not able to make a call')
         }
     }
@@ -170,6 +177,7 @@ const Session = () => {
                     if (res.status === 200) {
                         setUserSettings(res.data)
                     }
+                    getSessionMessages()
 
                 }
             } 
@@ -179,17 +187,51 @@ const Session = () => {
     }, [sessionId, userId, history, loginUrl])
 
 
+    const getSessionMessages = useCallback( async () => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/sessions/${sessionId}/messages`, {withCredentials:true})
+            if (response.status === 200) {
+                response.data.forEach((message:any) => {
+                    updateMessages({message:message.message, userId:message.userId, key:moment().format('x'), time:moment(message.createdAt).format('HH:mm'), day:moment(message.createdAt).format('DD/MM/YYYY')})
+                })
+            }
+        } catch (err) {
+            //do nothing
+        }
+    }, [])
+
+    const saveMessage = useCallback( async (message:any) => {
+        try {
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/v1/sessions/${sessionId}/messages`, {message, userId:parseInt(userId)}, {withCredentials:true})
+            if (response.status === 200) {
+                return response.data
+            }
+        } catch (err) {
+            //do nothing
+            return false
+        }
+    }, [])
+
     const updateConnectedUsers = (conn:any) => {
         setConnectedUsers((users:any) => {
-            return [...users, conn]
+            if (users.filter((user:any) => user.peer === conn.peer).length === 0) {
+                return [...users, conn]
+            }
+
+            return users
         })
     }
 
-    const updateMessages= (message:any) => {
+    const updateMessages = useCallback((message:any) => {
         setMessages((theMessages:any) => {
+            if (isEmojisOnly(message.message)) {
+                message.emoji = 'emoji-only'
+            } else {
+                message.emoji = 'not-emoji-only'
+            }
             return [...theMessages, message]
         })
-    }
+    }, [isEmojisOnly])
 
     useEffect(() => {
         getSessionDetails()
@@ -221,7 +263,6 @@ const Session = () => {
             });
 
         } catch (err) {
-            console.log(err)
             Antmessage.error('You are not able to make a call')
         }
     }, [])
@@ -247,7 +288,7 @@ const Session = () => {
         if (activePeer) {
             return
         }
-        const peer = new Peer(`${userId}-${moment().format('x')}`, {
+        const peer = new Peer(`${userId}-${moment().format('x')}_${CHAT_ROOM}`, {
             debug: 1,
             port: parseInt(process.env.REACT_APP_PEER_PORT || '') || 8000,
             host,
@@ -259,7 +300,7 @@ const Session = () => {
             socketIOClient.emit('join-room', CHAT_ROOM, id, userSettings.name)
         })
 
-        peer.on('connection', (conn: any) => {    
+        peer.on('connection', (conn: any) => {  
             setLoading(false)
             updateConnectedUsers(conn)
             conn.on('data', (data:any) => {
@@ -270,7 +311,7 @@ const Session = () => {
         })  
 
         peer.on('disconnected', () => {
-            socketIOClient.emit('user-disconnected', { room: CHAT_ROOM, id: activePeer.id ? activePeer.id : 'Unknown ID' })
+            socketIOClient.emit('user-disconnected', { room: CHAT_ROOM, id: activePeer ? activePeer.id : 'Unknown ID' })
         })
 
         const getUserMedia = navigator.mediaDevices.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
@@ -278,22 +319,23 @@ const Session = () => {
          showConfirm(getUserMedia, call)
         });
 
-    }, [CHAT_ROOM, userId, userSettings.name, activePeer, socketIOClient, showConfirm])
+    }, [CHAT_ROOM, userId, userSettings.name, activePeer, socketIOClient, showConfirm, updateMessages])
 
     useEffect(() => {
         socketIOClient.on("user-connected", (user:any, roomId: any, username: string) => {
+            setLoading(false)
             updateMessages({message:`${state?.username ? state?.username : 'User'} joined!`, key: moment().format('x'), type: 'notification-joined'})
             setConnectTo((connectTo:any) => [...connectTo, user])
         });
 
-        socketIOClient.on("user-left-the-video-call", () => {
+        socketIOClient.once("user-left-the-video-call", () => {
             if (activeVideoCall) {
                 Antmessage.warning(state?.username + ' left the call!', 5)
             }
             
         });
 
-        socketIOClient.on("user-left-the-voice-call", () => {
+        socketIOClient.once("user-left-the-voice-call", () => {
             if (activeVoiceCall) {
                 Antmessage.warning(state?.username + ' left the call!', 5)
             }
@@ -303,9 +345,10 @@ const Session = () => {
             setConnectedUsers((users:any) => {
                 return users.filter((user:any) => user.id !== peerId)
             })
+            updateMessages({message:`${state?.username ? state?.username : 'User'} left the session!`, key: moment().format('x'), type: 'notification-left'})
         })
 
-    }, [socketIOClient, state?.username, activeVoiceCall, activeVideoCall])
+    }, [socketIOClient, state?.username, activeVoiceCall, activeVideoCall, updateMessages])
 
     useEffect(() => {
         if (!activePeer) {
@@ -314,10 +357,10 @@ const Session = () => {
 
         const newConnectTo = connectTo
         newConnectTo.forEach((id:any, index:number) => {
-            const conn = activePeer.connect(id, {metadata: { name: userSettings.name, id: userId}});
+            const conn = activePeer.connect(id, {metadata: { name: userSettings.name, id: userId}, serialization: 'json'});
             conn.on('open', () => {
                 setLoading(false)
-                setConnectedUsers((connectedUsers:any) => [...connectedUsers, conn])
+                updateConnectedUsers(conn)
             });
 
             conn.on('data', (data:any) => {
@@ -329,18 +372,23 @@ const Session = () => {
         })
 
         setConnectTo(newConnectTo)
-    }, [connectTo, activePeer, userId, userSettings.name])
+    }, [connectTo, activePeer, userId, userSettings.name, updateMessages])
 
-    const sendMessage = () => {
+    const sendMessage = async () => {
         if (message && connectedUsers) {
-            const theMessage = {message, userId, key: moment().format('x') + userId}
-            connectedUsers.forEach((user:any) => {
-               user.send(theMessage)
-            })
-            updateMessages(theMessage)
+            const savedMessage = saveMessage(message)
+            if (await savedMessage !== false) {
+                const theMessage = {message:message, userId:userId, key:moment().format('x') + userId, time:moment(message.createdAt).format('HH:mm'), day:moment(message.createdAt).format('DD/MM/YYYY')}
+                connectedUsers.forEach((user:any) => {
+                    user.send(theMessage)
+                 })
+                updateMessages(theMessage)
+                form.setFieldsValue({message: ''})
+            } else {
+                Antmessage.error('Message could not be sent, please try again!')
+            }
         }
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-        form.setFieldsValue({message: ''})
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }) 
     }
 
     const capitalize = (str:string) => {
@@ -387,8 +435,8 @@ const Session = () => {
                             callConnectedUsersOrAnswerCall(true)
                         }} />
                         <img src={chatImg} alt="chat" onClick={() => {
-                            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
                             inputRef.current?.focus()
+                            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
                         }}/>
                         <img src={videoImg} alt="video" onClick={() => {
                             callConnectedUsersOrAnswerCall()
@@ -414,7 +462,7 @@ const Session = () => {
                     </Header>
                     <div ref={divRef} className="Session__Col__MessageList">
                         { messages.map((theMessage:any, index:number) => {
-                            return <MessageBubble type={theMessage.userId !== userId ? 'other': 'same'} message={theMessage.message} key={theMessage.key + index} messageType={theMessage.type}/>
+                            return <MessageBubble time={theMessage.time} type={parseInt(theMessage.userId) !== parseInt(userId) ? 'other': 'same'} message={theMessage.message} key={theMessage.key + index} messageType={theMessage.type} emoji={theMessage.emoji}/>
                         })}
                         <div ref={messagesEndRef} style={{marginBottom:'80px'}}></div>
                     </div>
