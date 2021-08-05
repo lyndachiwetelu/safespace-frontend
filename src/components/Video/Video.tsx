@@ -15,7 +15,6 @@ export default function Video({ srcObject, callState, type, ...props }: PropsTyp
     refVideo.current.srcObject = srcObject
 
     if (isMuted(type)) {
-        console.log('muted')
         refVideo.current.muted = true
     }
   }, [srcObject, type])

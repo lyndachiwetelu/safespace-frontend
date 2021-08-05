@@ -32,6 +32,16 @@
     align-self: center;
 } 
 
+.MessageBubble.emoji-only{
+    background:transparent;
+    height: auto;
+    line-height: 1.7em;
+}
+
+.MessageBubble.emoji-only p{
+    font-size: 55px;
+} 
+
 
 .MessageBubble.notification-joined p, .MessageBubble.notification-left p{
     font-size: 12px;
