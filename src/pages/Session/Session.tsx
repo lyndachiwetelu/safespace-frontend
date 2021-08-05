@@ -314,7 +314,7 @@ const Session = () => {
 
         const newConnectTo = connectTo
         newConnectTo.forEach((id:any, index:number) => {
-            const conn = activePeer.connect(id, {metadata: { name: userSettings.name, id: userId}});
+            const conn = activePeer.connect(id, {metadata: { name: userSettings.name, id: userId}, serialization: 'json'});
             conn.on('open', () => {
                 setLoading(false)
                 setConnectedUsers((connectedUsers:any) => [...connectedUsers, conn])
