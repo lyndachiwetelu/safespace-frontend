@@ -177,6 +177,7 @@ const Session = () => {
                     if (res.status === 200) {
                         setUserSettings(res.data)
                     }
+                    getSessionMessages()
 
                 }
             } 
@@ -185,6 +186,31 @@ const Session = () => {
         }
     }, [sessionId, userId, history, loginUrl])
 
+
+    const getSessionMessages = useCallback( async () => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/sessions/${sessionId}/messages`, {withCredentials:true})
+            if (response.status === 200) {
+                response.data.forEach((message:any) => {
+                    updateMessages({message:message.message, userId:message.userId, key:moment().format('x'), time:moment(message.createdAt).format('HH:mm'), day:moment(message.createdAt).format('DD/MM/YYYY')})
+                })
+            }
+        } catch (err) {
+            //do nothing
+        }
+    }, [])
+
+    const saveMessage = useCallback( async (message:any) => {
+        try {
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/v1/sessions/${sessionId}/messages`, {message, userId:parseInt(userId)}, {withCredentials:true})
+            if (response.status === 200) {
+                return response.data
+            }
+        } catch (err) {
+            //do nothing
+            return false
+        }
+    }, [])
 
     const updateConnectedUsers = (conn:any) => {
         setConnectedUsers((users:any) => {
@@ -262,7 +288,7 @@ const Session = () => {
         if (activePeer) {
             return
         }
-        const peer = new Peer(`${userId}-${moment().format('x')}`, {
+        const peer = new Peer(`${userId}-${moment().format('x')}_${CHAT_ROOM}`, {
             debug: 1,
             port: parseInt(process.env.REACT_APP_PEER_PORT || '') || 8000,
             host,
@@ -274,7 +300,7 @@ const Session = () => {
             socketIOClient.emit('join-room', CHAT_ROOM, id, userSettings.name)
         })
 
-        peer.on('connection', (conn: any) => {    
+        peer.on('connection', (conn: any) => {  
             setLoading(false)
             updateConnectedUsers(conn)
             conn.on('data', (data:any) => {
@@ -296,7 +322,8 @@ const Session = () => {
     }, [CHAT_ROOM, userId, userSettings.name, activePeer, socketIOClient, showConfirm, updateMessages])
 
     useEffect(() => {
-        socketIOClient.once("user-connected", (user:any, roomId: any, username: string) => {
+        socketIOClient.on("user-connected", (user:any, roomId: any, username: string) => {
+            setLoading(false)
             updateMessages({message:`${state?.username ? state?.username : 'User'} joined!`, key: moment().format('x'), type: 'notification-joined'})
             setConnectTo((connectTo:any) => [...connectTo, user])
         });
@@ -318,6 +345,7 @@ const Session = () => {
             setConnectedUsers((users:any) => {
                 return users.filter((user:any) => user.id !== peerId)
             })
+            updateMessages({message:`${state?.username ? state?.username : 'User'} left the session!`, key: moment().format('x'), type: 'notification-left'})
         })
 
     }, [socketIOClient, state?.username, activeVoiceCall, activeVideoCall, updateMessages])
@@ -346,16 +374,21 @@ const Session = () => {
         setConnectTo(newConnectTo)
     }, [connectTo, activePeer, userId, userSettings.name, updateMessages])
 
-    const sendMessage = () => {
+    const sendMessage = async () => {
         if (message && connectedUsers) {
-            const theMessage = {message, userId, key: moment().format('x') + userId}
-            connectedUsers.forEach((user:any) => {
-               user.send(theMessage)
-            })
-            updateMessages(theMessage)
+            const savedMessage = saveMessage(message)
+            if (await savedMessage !== false) {
+                const theMessage = {message:message, userId:userId, key:moment().format('x') + userId, time:moment(message.createdAt).format('HH:mm'), day:moment(message.createdAt).format('DD/MM/YYYY')}
+                connectedUsers.forEach((user:any) => {
+                    user.send(theMessage)
+                 })
+                updateMessages(theMessage)
+                form.setFieldsValue({message: ''})
+            } else {
+                Antmessage.error('Message could not be sent, please try again!')
+            }
         }
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-        form.setFieldsValue({message: ''})
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }) 
     }
 
     const capitalize = (str:string) => {
@@ -402,8 +435,8 @@ const Session = () => {
                             callConnectedUsersOrAnswerCall(true)
                         }} />
                         <img src={chatImg} alt="chat" onClick={() => {
-                            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
                             inputRef.current?.focus()
+                            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
                         }}/>
                         <img src={videoImg} alt="video" onClick={() => {
                             callConnectedUsersOrAnswerCall()
@@ -429,7 +462,7 @@ const Session = () => {
                     </Header>
                     <div ref={divRef} className="Session__Col__MessageList">
                         { messages.map((theMessage:any, index:number) => {
-                            return <MessageBubble type={theMessage.userId !== userId ? 'other': 'same'} message={theMessage.message} key={theMessage.key + index} messageType={theMessage.type} emoji={theMessage.emoji}/>
+                            return <MessageBubble time={theMessage.time} type={parseInt(theMessage.userId) !== parseInt(userId) ? 'other': 'same'} message={theMessage.message} key={theMessage.key + index} messageType={theMessage.type} emoji={theMessage.emoji}/>
                         })}
                         <div ref={messagesEndRef} style={{marginBottom:'80px'}}></div>
                     </div>

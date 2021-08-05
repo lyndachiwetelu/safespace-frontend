@@ -7,6 +7,13 @@
     border-radius: 20px;
     padding: 10px;
     line-height: 1.5em;
+    display: flex;
+    flex-direction: column;
+}
+
+.MessageBubble p:nth-child(2) {
+   font-size: 10px;
+   align-self: flex-end;
 }
 
 .MessageBubble p {
@@ -36,6 +43,11 @@
     background:transparent;
     height: auto;
     line-height: 1.7em;
+}
+
+.MessageBubble.emoji-only p:nth-child(2){
+  font-size: 10px;
+  color: #27a68f;
 }
 
 .MessageBubble.emoji-only p{
