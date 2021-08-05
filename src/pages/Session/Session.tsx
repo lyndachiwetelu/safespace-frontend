@@ -285,7 +285,7 @@ const Session = () => {
         })  
 
         peer.on('disconnected', () => {
-            socketIOClient.emit('user-disconnected', { room: CHAT_ROOM, id: activePeer.id ? activePeer.id : 'Unknown ID' })
+            socketIOClient.emit('user-disconnected', { room: CHAT_ROOM, id: activePeer ? activePeer.id : 'Unknown ID' })
         })
 
         const getUserMedia = navigator.mediaDevices.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
