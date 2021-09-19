@@ -297,7 +297,12 @@ const Session = () => {
 
         peer.on('open', (id) => {
             setActivePeer(peer)
-            socketIOClient.emit('join-room', CHAT_ROOM, id, userSettings.name)
+            const data = {
+                roomId: CHAT_ROOM, 
+                userId: id, 
+                username: userSettings.name
+            }
+            socketIOClient.emit('join-room', data)
         })
 
         peer.on('connection', (conn: any) => {  
@@ -343,7 +348,7 @@ const Session = () => {
 
         socketIOClient.on('peer-disconnected', (peerId) => {
             setConnectedUsers((users:any) => {
-                return users.filter((user:any) => user.id !== peerId)
+                return users.filter((user:any) => user.peer !== peerId)
             })
             updateMessages({message:`${state?.username ? state?.username : 'User'} left the session!`, key: moment().format('x'), type: 'notification-left'})
         })
