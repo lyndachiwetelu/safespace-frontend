@@ -111,7 +111,7 @@ const SessionBox = ( { session, type, fetch, isTherapist = false  } : { session:
                 
                 </Col>
                 <Col lg={3}>
-                   { type === 'upcoming' || type === 'active' ? <Button size="large" className="SessionBox__Button--Join" disabled={isDisabled(type, 'join')} onClick={()=>{ history.push(`/session/${session.id}`)}}>JOIN</Button> : null}
+                   { type === 'upcoming' || type === 'active' ? <Button size="large" className="SessionBox__Button--Join" disabled={isDisabled(type, 'join')} onClick={()=>{ history.push(`/session/${session.id}`, {username: isTherapist ? session.user.name : session.therapistInfo.name} )}}>JOIN</Button> : null}
                    { type === 'past' ? <Button size="large" className="SessionBox__Button--Details" onClick={()=>{ history.push(`/session/${session.id}`, {username: isTherapist ? session.user.name : session.therapistInfo.name})}}>DETAILS</Button> : null }
                 </Col>
                 <Col lg={3}>
